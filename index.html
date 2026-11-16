@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>الصمت القاتل</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;touch-action:none;-webkit-touch-callout:none}
+html,body{margin:0;height:100%;overflow:hidden;background:#000;color:#ddd;font-family:'Tajawal','Segoe UI',Tahoma,Arial,sans-serif;overscroll-behavior:none}
+:root{--b:clamp(46px,12.5vw,58px);--sl:max(10px,env(safe-area-inset-left));--sr:max(10px,env(safe-area-inset-right));--st:max(8px,env(safe-area-inset-top));--sb:max(12px,env(safe-area-inset-bottom))}
+#gl{position:fixed;inset:0;width:100%;height:100%;display:block;transform-origin:center}
+.hide{display:none!important}
+.layer{position:fixed;inset:0;pointer-events:none}
+#vig{background:radial-gradient(ellipse at center,transparent 38%,rgba(0,0,0,.88) 100%)}
+#pvig{background:radial-gradient(ellipse at center,transparent 30%,rgba(130,0,0,.95) 100%);opacity:0}
+#grain{opacity:.07;background-size:128px 128px;animation:gr .5s steps(5) infinite}
+@keyframes gr{0%{background-position:0 0}20%{background-position:-30px 20px}40%{background-position:40px -50px}60%{background-position:-70px -10px}80%{background-position:20px 60px}100%{background-position:0 0}}
+#flash{background:#a00;opacity:0;transition:opacity .6s}
+#fade{background:#000;opacity:1;transition:opacity 4s;z-index:5}
+#lookzone{position:fixed;inset:0;touch-action:none}
+#hud{position:fixed;inset:0;pointer-events:none;z-index:10}
+#hud>*{position:absolute}
+.bar{display:flex;align-items:center;gap:5px;font-size:12px;height:15px;direction:ltr}
+.bar span{font-size:12px;width:16px;text-align:center}
+.bar i{display:block;flex:1;height:7px;background:rgba(255,255,255,.14);border-radius:4px;overflow:hidden}
+.bar b{display:block;height:100%;width:50%;background:#d8c27a;border-radius:4px}
+.bar em{font-style:normal;font-size:11px;min-width:22px;direction:rtl;color:#cbb}
+#topL{top:var(--st);left:var(--sl);width:116px;display:flex;flex-direction:column;gap:5px;background:rgba(0,0,0,.35);padding:6px;border-radius:8px}
+#bNoise{background:#7ac}
+#bSta{background:#7c8}
+#topR{top:var(--st);right:var(--sr);width:122px;background:rgba(0,0,0,.35);padding:6px 8px;border-radius:8px;text-align:center;font-size:13px;font-weight:700;display:flex;flex-direction:column;gap:4px}
+#topR small{font-weight:400;color:#bbb;font-size:11px}
+#bDay{background:linear-gradient(90deg,#357,#ec8,#357)}
+#topC{top:var(--st);left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;width:44px}
+#arrow{font-size:26px;color:#e9c46a;text-shadow:0 0 8px #000;transition:transform .1s linear;line-height:1}
+#objBar{top:calc(var(--st) + 64px);left:50%;transform:translateX(-50%);max-width:92vw;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);padding:3px 12px;border-radius:14px;font-size:12px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sub{top:calc(var(--st) + 96px);left:50%;transform:translateX(-50%);width:min(92vw,560px);background:rgba(0,0,0,.6);border-right:3px solid #a33;padding:7px 11px;border-radius:6px;font-size:clamp(13px,3.6vw,16px);line-height:1.6;opacity:0;transition:opacity .4s}
+#sub.show{opacity:1}
+#sub b{color:#e08a7a}
+#warn{top:34%;left:50%;transform:translate(-50%,-50%);width:90vw;text-align:center;font-size:clamp(20px,6vw,34px);font-weight:900;color:#e33;text-shadow:0 0 14px #000,0 0 30px #600;opacity:0;transition:opacity .25s}
+#warn.show{opacity:1}
+#warn.pulse{animation:pl .5s infinite alternate}
+@keyframes pl{from{opacity:.55}to{opacity:1}}
+#prog{bottom:calc(var(--b)*2 + 110px);left:50%;transform:translateX(-50%);width:140px;height:8px;background:rgba(255,255,255,.15);border-radius:5px;overflow:hidden}
+#prog b{display:block;height:100%;width:0;background:#e9c46a}
+#joy{left:var(--sl);bottom:var(--sb);width:min(150px,36vw);height:min(150px,36vw);border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.06),rgba(255,255,255,.12));border:2px solid rgba(255,255,255,.22);pointer-events:auto;touch-action:none}
+#knob{position:absolute;left:50%;top:50%;width:44%;height:44%;margin:-22% 0 0 -22%;border-radius:50%;background:rgba(255,255,255,.28);border:2px solid rgba(255,255,255,.45)}
+#btns{right:var(--sr);bottom:var(--sb);display:grid;grid-template-columns:repeat(3,var(--b));gap:8px;pointer-events:auto;direction:ltr}
+.btn{width:var(--b);height:var(--b);border-radius:50%;background:rgba(20,20,22,.6);border:2px solid rgba(255,255,255,.25);color:#eee;font-size:calc(var(--b)*.4);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;pointer-events:auto;position:relative;font-family:inherit;padding:0}
+.btn small{font-size:calc(var(--b)*.2);margin-top:2px;direction:rtl}
+.btn.on{background:rgba(233,196,106,.35);border-color:#e9c46a}
+.btn:active{transform:scale(.92);background:rgba(255,255,255,.2)}
+.badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:9px;background:#c22;color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+#actBtn{right:var(--sr);bottom:calc(var(--sb) + var(--b)*2 + 24px);width:calc(var(--b)*1.45);height:calc(var(--b)*1.45);border-radius:50%;background:rgba(233,196,106,.3);border:3px solid #e9c46a;color:#fff;font-size:calc(var(--b)*.5);font-family:inherit;pointer-events:auto;animation:ab 1s infinite alternate;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0}
+#actBtn small{font-size:calc(var(--b)*.24);font-weight:700}
+@keyframes ab{from{box-shadow:0 0 4px #e9c46a}to{box-shadow:0 0 22px #e9c46a}}
+#calmBtn{left:50%;bottom:var(--sb);transform:translateX(-50%);background:rgba(120,30,30,.75);border:2px solid #e66;color:#fff;border-radius:22px;padding:8px 16px;font-size:15px;font-family:inherit;font-weight:700;pointer-events:auto;animation:ab 0.8s infinite alternate}
+#chat{position:fixed;z-index:30;left:50%;bottom:8px;transform:translateX(-50%);width:min(96vw,460px);height:min(56dvh,330px);background:rgba(8,8,10,.92);border:1px solid rgba(255,255,255,.2);border-radius:12px;display:flex;flex-direction:column;pointer-events:auto;overflow:hidden}
+#chatHead{display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,255,255,.07);font-weight:700;font-size:14px}
+#chatHead .bar{flex:1}
+#bFear{background:#c55}
+#chatClose{background:none;border:0;color:#fff;font-size:20px;padding:0 6px;font-family:inherit}
+.scroll{touch-action:pan-y;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#msgs{flex:1;padding:8px;display:flex;flex-direction:column;gap:6px;-webkit-user-select:text;user-select:text}
+.msg{max-width:86%;padding:6px 10px;border-radius:10px;font-size:14px;line-height:1.55}
+.msg.bot{align-self:flex-start;background:#2a1b1b;border:1px solid #4a2a2a}
+.msg.you{align-self:flex-end;background:#1c2a33;border:1px solid #2c4452}
+.msg.sys{align-self:center;background:none;color:#998;font-size:12px}
+#typing{padding:0 12px 3px;font-size:12px;color:#a88}
+#chips{display:flex;gap:6px;padding:4px 8px;overflow-x:auto;touch-action:pan-x;white-space:nowrap;flex:none}
+#chips button{flex:none;background:#222;color:#ddd;border:1px solid #444;border-radius:14px;padding:5px 11px;font-size:13px;font-family:inherit}
+#chatForm{display:flex;gap:6px;padding:6px 8px 8px}
+#chatIn{flex:1;min-width:0;background:#15151a;border:1px solid #444;color:#fff;border-radius:8px;padding:8px 10px;font-size:16px;font-family:inherit;-webkit-user-select:text;user-select:text;touch-action:manipulation;direction:rtl}
+#chatForm button{background:#5a2020;border:0;color:#fff;border-radius:8px;padding:0 14px;font-size:14px;font-family:inherit;font-weight:700}
+#micBtn{background:#233!important;font-size:18px!important;padding:0 10px!important}
+.ov{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:18px;background:radial-gradient(circle at 50% 30%,rgba(40,8,8,.85),rgba(0,0,0,.97));overflow-y:auto;touch-action:pan-y}
+.ov h1{font-size:clamp(38px,12vw,68px);margin:0 0 4px;color:#c22;text-shadow:0 0 24px #600;font-weight:900;letter-spacing:1px}
+.ov h2{font-size:clamp(16px,4.5vw,22px);color:#caa;font-weight:400;margin:0 0 14px}
+.ov ul{list-style:none;padding:0;margin:0 0 16px;text-align:right;max-width:430px;font-size:clamp(13px,3.7vw,16px);line-height:1.8;color:#ccc}
+.ov li{margin:3px 0}
+.ov button{background:#7a1818;border:2px solid #d33;color:#fff;font-size:clamp(18px,5vw,24px);padding:12px 38px;border-radius:30px;font-family:inherit;font-weight:900;touch-action:manipulation}
+.ov p{max-width:440px;line-height:1.8;font-size:clamp(14px,4vw,17px);color:#cbb}
+#noteCard{position:fixed;z-index:40;left:50%;top:50%;transform:translate(-50%,-50%);width:min(88vw,400px);background:#e5d9b6;color:#2a1c10;padding:16px;border-radius:4px;box-shadow:0 0 60px #000;text-align:center;font-size:clamp(14px,4vw,17px);line-height:1.9;pointer-events:auto}
+#noteCard h3{margin:0 0 8px;font-size:15px;color:#6a2a1a}
+#noteCard button{margin-top:10px;background:#3a2a1a;color:#fff;border:0;padding:8px 24px;border-radius:6px;font-family:inherit;font-size:15px}
+</style>
+</head>
+<body>
+<canvas id="gl"></canvas>
+<div id="vig" class="layer"></div>
+<div id="pvig" class="layer"></div>
+<div id="grain" class="layer"></div>
+<div id="flash" class="layer"></div>
+<div id="fade" class="layer"></div>
+<div id="lookzone"></div>
+
+<div id="hud" class="hide">
+  <div id="topL">
+    <div class="bar"><span>🔋</span><i><b id="bBat"></b></i><em id="spareTxt">+١</em></div>
+    <div class="bar"><span>⚡</span><i><b id="bSta"></b></i></div>
+    <div class="bar"><span>🔊</span><i><b id="bNoise"></b></i><em id="canTxt">🥫٢</em></div>
+  </div>
+  <div id="topC"><div id="arrow">▲</div></div>
+  <div id="topR">
+    <div id="dayTxt">اليوم ١ / ٣</div>
+    <div class="bar"><i><b id="bDay"></b></i></div>
+    <small id="clockTxt">الليل</small>
+    <small id="remTxt"></small>
+  </div>
+  <div id="objBar">اتجه إلى البلدة</div>
+  <div id="sub"></div>
+  <div id="warn"></div>
+  <div id="prog" class="hide"><b></b></div>
+  <button id="calmBtn" class="hide">🤫 هدّئ سامر</button>
+  <button id="actBtn" class="hide">✋<small>تفتيش</small></button>
+  <div id="joy"><div id="knob"></div></div>
+  <div id="btns">
+    <button class="btn" id="bChat">💬<small>سامر</small><span class="badge hide" id="chatBadge">1</span></button>
+    <button class="btn on" id="bLight">🔦<small>المصباح</small></button>
+    <button class="btn" id="bCrouch">🧎<small>انحناء</small></button>
+    <button class="btn" id="bThrow">🥫<small>رمي</small></button>
+    <button class="btn" id="bRun">🏃<small>ركض</small></button>
+    <button class="btn" id="bMute">🔊<small>الصوت</small></button>
+  </div>
+</div>
+
+<div id="chat" class="hide">
+  <div id="chatHead"><span>💬 سامر</span><div class="bar"><span>😨</span><i><b id="bFear"></b></i></div><button id="chatClose">✕</button></div>
+  <div id="msgs" class="scroll"></div>
+  <div id="typing" class="hide">سامر يكتب...</div>
+  <div id="chips" class="scroll">
+    <button data-t="اهدأ يا سامر، أنا معك">🤫 اهدأ</button>
+    <button data-t="أين نذهب الآن؟">🧭 أين نذهب؟</button>
+    <button data-t="فتّش المكان معي">🔍 فتّش</button>
+    <button data-t="هل أنت بخير؟">❤ هل أنت بخير؟</button>
+    <button data-t="أين الوحش؟">👹 الوحش؟</button>
+    <button data-t="أين نختبئ؟">🏚 اختباء</button>
+    <button data-t="اصمت من فضلك">🤐 اصمت</button>
+    <button data-t="كم بقي من الوقت؟">⏳ الوقت</button>
+  </div>
+  <form id="chatForm" autocomplete="off">
+    <button type="button" id="micBtn" class="hide">🎤</button>
+    <input id="chatIn" placeholder="اكتب لسامر..." enterkeyhint="send" autocomplete="off">
+    <button type="submit">إرسال</button>
+  </form>
+</div>
+
+<div id="noteCard" class="hide"><h3>📜 ملاحظة عُثر عليها</h3><div id="noteTxt"></div><button id="noteClose">إغلاق</button></div>
+
+<div id="start" class="ov">
+  <h1>الصمت القاتل</h1>
+  <h2>انجُ ثلاثة أيام في بلدة الأشباح</h2>
+  <ul>
+    <li>🕹️ العصا اليسرى للمشي • اسحب أي مكان بالشاشة للنظر.</li>
+    <li>👹 الوحش أعمى لكنه يسمع كل شيء. إن زأر فتجمّد!</li>
+    <li>🤫 لا تركض ولا تتحرك عندما يقترب. الانحناء أهدأ.</li>
+    <li>💥 الزجاج والعلب على الأرض تفضحك. سامر سيحذّرك.</li>
+    <li>🥫 ارمِ علبة بعيداً لإلهاء الوحش.</li>
+    <li>💬 تحدّث مع سامر (كتابة أو صوت) وهدّئه كي لا يصرخ.</li>
+    <li>🎧 يُفضّل استخدام سماعات الرأس.</li>
+  </ul>
+  <button id="startBtn">ابدأ الرحلة</button>
+</div>
+<div id="over" class="ov hide">
+  <h1>انتهى كل شيء</h1>
+  <p id="overWhy"></p>
+  <p id="overStats" style="color:#887"></p>
+  <button id="retryBtn">حاول مجدداً</button>
+</div>
+<div id="win" class="ov hide">
+  <h1 style="color:#e9c46a;text-shadow:0 0 24px #a80">نجوتَ!</h1>
+  <p>أشرق الفجر الرابع على بلدة الصمت، وتلاشى الزئير بين الأشجار.<br>لقد صمدتَ ثلاث ليالٍ كاملة... وما زال سامر يتنفس بجانبك.</p>
+  <p id="winStats" style="color:#887"></p>
+  <button id="again">العب مجدداً</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+(()=>{
+'use strict';
+const $=id=>document.getElementById(id);
+const rand=(a,b)=>a+Math.random()*(b-a);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const AD='٠١٢٣٤٥٦٧٨٩';
+const ar=n=>String(Math.round(n)).replace(/\d/g,d=>AD[d]);
+const angDiff=(a,b)=>((b-a+Math.PI*3)%(Math.PI*2))-Math.PI;
+const mmss=s=>{s=Math.max(0,Math.floor(s));return ar(Math.floor(s/60))+':'+(s%60<10?'٠':'')+ar(s%60)};
+
+/* ===================== GAME STATE ===================== */
+const CYCLE=240, F0=.12;
+const G={started:false,over:false,won:false,t:0,phase:'forest',day:1,L:0,fr:F0,
+ px:0,pz:232,yaw:0,pitch:0,eye:1.7,bobT:0,
+ battery:100,spare:1,cans:2,stamina:100,exhausted:false,flash:true,crouch:false,run:false,
+ noise:0,moving:false,mode:'still',indoor:null,indoorF:0,lethalR:0,spike:0,spikeR:0,spikeWhy:'',
+ stepDist:0,stepNoiseT:0,fear:0,fearBoost:0,pulse:0,shake:0,monsterOn:false,
+ notes:0,searched:0,noiseEvents:0,search:null,nearLoot:null,hintT:0,deathT:0,overShown:false,deathWhy:'',
+ lastLabel:null,hbT:1,ambT:rand(8,14),sizeSet:false,muted:false,flick:0,scriptI:0,townT:0};
+const C={panic:8,quiet:0,gaspT:6,spookT:40,lastCalm:-99,x:0,z:0,ang:0,walkT:0,moving:false,stuck:0,warnT:0,calmStreak:0,usedAmb:[]};
+const Mo={g:null,parts:null,x:0,z:0,ang:0,state:'hidden',timer:0,next:35,huntLeft:0,path:[],sniff:0,wT:0,spd:0,walkT:0,stepPh:0,d:999,alert:null,spawnNode:0,announced:false,stepSide:0};
+
+/* ===================== AUDIO ===================== */
+const Aud={ctx:null,
+ init(){
+  if(this.ctx)return;
+  const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return;
+  const c=this.ctx=new AC();
+  const comp=c.createDynamicsCompressor(); comp.connect(c.destination);
+  this.master=c.createGain(); this.master.gain.value=.9; this.master.connect(comp);
+  const nb=c.createBuffer(1,c.sampleRate*2,c.sampleRate); const d=nb.getChannelData(0); for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1; this.nb=nb;
+  const len=Math.floor(c.sampleRate*2.2); const ib=c.createBuffer(2,len,c.sampleRate);
+  for(let ch=0;ch<2;ch++){const dd=ib.getChannelData(ch);for(let i=0;i<len;i++)dd[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.6)}
+  this.rev=c.createConvolver(); this.rev.buffer=ib; const rg=c.createGain(); rg.gain.value=.55; this.rev.connect(rg); rg.connect(this.master);
+  const cur=new Float32Array(256); for(let i=0;i<256;i++){const x=i/128-1;cur[i]=Math.tanh(x*4)} this.curve=cur;
+  this.ambient();
+ },
+ resume(){ if(this.ctx&&this.ctx.state!=='running')this.ctx.resume() },
+ setMute(m){ if(this.master)this.master.gain.value=m?0:.9 },
+ ambient(){
+  const c=this.ctx;
+  const ws=c.createBufferSource(); ws.buffer=this.nb; ws.loop=true;
+  const wf=c.createBiquadFilter(); wf.type='bandpass'; wf.frequency.value=420; wf.Q.value=.7;
+  this.windG=c.createGain(); this.windG.gain.value=.12;
+  const lfo=c.createOscillator(); lfo.frequency.value=.09; const lg=c.createGain(); lg.gain.value=.05; lfo.connect(lg); lg.connect(this.windG.gain); lfo.start();
+  ws.connect(wf); wf.connect(this.windG); this.windG.connect(this.master); ws.start();
+  const co=c.createOscillator(); co.frequency.value=4300; const ct=c.createGain(); ct.gain.value=.5;
+  const cl=c.createOscillator(); cl.frequency.value=14; const clg=c.createGain(); clg.gain.value=.5; cl.connect(clg); clg.connect(ct.gain);
+  this.crG=c.createGain(); this.crG.gain.value=0; co.connect(ct); ct.connect(this.crG); this.crG.connect(this.master); co.start(); cl.start();
+  this.droneG=c.createGain(); this.droneG.gain.value=.04;
+  [46,47.4].forEach(f=>{const o=c.createOscillator();o.type='sine';o.frequency.value=f;o.connect(this.droneG);o.start()});
+  this.droneG.connect(this.master);
+ },
+ setAmb(forest,night,fear){ if(!this.ctx)return; const t=this.ctx.currentTime;
+  this.crG.gain.setTargetAtTime(.012*night*forest,t,.5); this.droneG.gain.setTargetAtTime(.04+.12*fear,t,.4); this.windG.gain.setTargetAtTime(.09+.07*forest,t,1) },
+ out(n,wet,pan){ const c=this.ctx; let last=n;
+  if(pan&&c.createStereoPanner){const p=c.createStereoPanner();p.pan.value=clamp(pan,-1,1);n.connect(p);last=p}
+  last.connect(this.master);
+  if(wet>0){const w=c.createGain();w.gain.value=wet;last.connect(w);w.connect(this.rev)} },
+ tone(o){ const c=this.ctx; if(!c)return; const t=c.currentTime+(o.delay||0);
+  const osc=c.createOscillator(); osc.type=o.type||'sine'; osc.frequency.setValueAtTime(o.f0,t);
+  if(o.f1)osc.frequency.exponentialRampToValueAtTime(Math.max(1,o.f1),t+o.dur);
+  const g=c.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(Math.max(.0002,o.vol),t+(o.atk||.01)); g.gain.exponentialRampToValueAtTime(.0001,t+o.dur);
+  osc.connect(g); this.out(g,o.wet||0,o.pan||0); osc.start(t); osc.stop(t+o.dur+.05) },
+ noise(o){ const c=this.ctx; if(!c)return; const t=c.currentTime+(o.delay||0);
+  const s=c.createBufferSource(); s.buffer=this.nb; s.loop=true;
+  const f=c.createBiquadFilter(); f.type=o.type||'lowpass'; f.frequency.setValueAtTime(o.f||800,t); if(o.f1)f.frequency.exponentialRampToValueAtTime(o.f1,t+o.dur); f.Q.value=o.q||1;
+  const g=c.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(Math.max(.0002,o.vol),t+(o.atk||.01)); g.gain.exponentialRampToValueAtTime(.0001,t+o.dur);
+  s.connect(f); f.connect(g); this.out(g,o.wet||0,o.pan||0); s.start(t,Math.random()*1.5); s.stop(t+o.dur+.05) },
+ heart(v){ this.tone({f0:62,f1:38,dur:.16,vol:.7*v,wet:.1}); this.tone({f0:52,f1:34,dur:.14,vol:.5*v,delay:.19}); this.noise({f:140,dur:.12,vol:.3*v}) },
+ step(v){ this.noise({f:280,f1:140,dur:.1,vol:v}) },
+ mstep(v,pan){ this.tone({f0:58,f1:26,dur:.45,vol:v,pan,wet:.3}); this.noise({f:200,f1:80,dur:.35,vol:v*.9,pan,wet:.3}) },
+ glass(v,pan){ for(let i=0;i<8;i++){const dl=i*rand(.03,.09); this.noise({type:'highpass',f:rand(4000,7500),dur:rand(.06,.16),vol:.28*v,delay:dl,pan}); this.tone({type:'triangle',f0:rand(2400,5600),f1:rand(1800,3000),dur:.14,vol:.07*v,delay:dl,pan,wet:.2})} },
+ can(v,pan){ for(let i=0;i<6;i++){const dl=i*(.13-i*.012); this.tone({type:'square',f0:rand(650,1100),f1:380,dur:.09,vol:.11*v*Math.pow(.72,i),delay:dl,pan,wet:.25}); this.noise({type:'bandpass',f:2800,q:3,dur:.06,vol:.2*v*Math.pow(.72,i),delay:dl,pan})} },
+ roar(vol,muf,pan){ const c=this.ctx; if(!c)return; const t=c.currentTime;
+  const g=c.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(vol,t+.4); g.gain.setValueAtTime(vol,t+1.9); g.gain.exponentialRampToValueAtTime(.001,t+3.5);
+  const lp=c.createBiquadFilter(); lp.type='lowpass'; lp.frequency.setValueAtTime(380,t); lp.frequency.linearRampToValueAtTime(2000-muf*1500,t+1); lp.frequency.linearRampToValueAtTime(260,t+3.3);
+  const ws=c.createWaveShaper(); ws.curve=this.curve; ws.connect(lp); lp.connect(g);
+  [68,92,138].forEach((f,i)=>{const o=c.createOscillator(); o.type='sawtooth'; o.frequency.setValueAtTime(f*1.5,t); o.frequency.exponentialRampToValueAtTime(f*.55,t+3.3);
+   const lfo=c.createOscillator(); lfo.frequency.value=17+i*8; const lg=c.createGain(); lg.gain.value=f*.09; lfo.connect(lg); lg.connect(o.frequency); lfo.start(t); lfo.stop(t+3.6);
+   const og=c.createGain(); og.gain.value=.33; o.connect(og); og.connect(ws); o.start(t); o.stop(t+3.6)});
+  const ns=c.createBufferSource(); ns.buffer=this.nb; ns.loop=true; const bp=c.createBiquadFilter(); bp.type='bandpass'; bp.frequency.setValueAtTime(500,t); bp.frequency.linearRampToValueAtTime(1100,t+1.2); bp.frequency.linearRampToValueAtTime(300,t+3.2); bp.Q.value=1.2;
+  const tr=c.createGain(); tr.gain.value=.5; const tl=c.createOscillator(); tl.frequency.value=32; const tlg=c.createGain(); tlg.gain.value=.5; tl.connect(tlg); tlg.connect(tr.gain); tl.start(t); tl.stop(t+3.6);
+  ns.connect(bp); bp.connect(tr); tr.connect(ws); ns.start(t); ns.stop(t+3.6);
+  const sub=c.createOscillator(); sub.frequency.setValueAtTime(48,t); sub.frequency.exponentialRampToValueAtTime(28,t+3.3); const sg=c.createGain(); sg.gain.value=.7; sub.connect(sg); sg.connect(g); sub.start(t); sub.stop(t+3.6);
+  this.out(g,.55,pan) },
+ scare(){ this.noise({type:'bandpass',f:1500,f1:600,q:.8,dur:1.4,vol:.9,atk:.02}); this.tone({type:'sawtooth',f0:900,f1:200,dur:1.2,vol:.4,atk:.02}); this.tone({type:'sawtooth',f0:80,f1:40,dur:1.6,vol:.6,atk:.02}) },
+ click(){ this.tone({type:'square',f0:900,f1:500,dur:.04,vol:.07}) },
+ blip(){ this.tone({f0:420,f1:560,dur:.12,vol:.05,wet:.4}) },
+ gasp(){ this.noise({type:'bandpass',f:1800,f1:900,q:1.5,dur:.5,vol:.35,atk:.12,wet:.3}) },
+ creak(){ this.tone({type:'sawtooth',f0:80,f1:150,dur:1,vol:.035,atk:.4,wet:.5}); this.noise({type:'bandpass',f:600,q:6,dur:1,vol:.03,atk:.4,wet:.4}) },
+ howl(){ this.tone({f0:240,f1:180,dur:3.5,vol:.05,atk:1.2,wet:.9}); this.tone({f0:360,f1:270,dur:3.5,vol:.025,atk:1.4,wet:.9}) },
+ whisper(){ this.noise({type:'bandpass',f:2600,f1:1700,q:3,dur:1.3,vol:.06,atk:.5,wet:.6,pan:rand(-.9,.9)}) },
+ knock(){ for(let i=0;i<3;i++)this.tone({f0:150,f1:70,dur:.12,vol:.3,delay:i*.28,wet:.5,pan:rand(-.8,.8)}) },
+ twig(){ const p=rand(-.9,.9); this.noise({type:'highpass',f:2500,dur:.05,vol:.35,pan:p}); this.noise({type:'highpass',f:3200,dur:.04,vol:.25,delay:.08,pan:p}) },
+ ambientEvent(){ pick([()=>this.creak(),()=>this.howl(),()=>this.whisper(),()=>this.knock(),()=>this.twig(),()=>this.twig()])() }
+};
+
+/* ===================== THREE SETUP ===================== */
+const canvas=$('gl');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:false,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.6));
+const scene=new THREE.Scene();
+const nightC=new THREE.Color(0x040508), dayC=new THREE.Color(0x5e6b70), fogC=new THREE.Color();
+scene.fog=new THREE.FogExp2(0x040508,.05);
+scene.background=new THREE.Color(0x040508);
+const camera=new THREE.PerspectiveCamera(70,1,.1,200);
+camera.rotation.order='YXZ';
+scene.add(camera);
+const hemi=new THREE.HemisphereLight(0x8899aa,0x1a1510,.5); scene.add(hemi);
+const sun=new THREE.DirectionalLight(0x9fb0d0,.3); sun.position.set(30,60,20); scene.add(sun);
+const spot=new THREE.SpotLight(0xffeccc,90,60,.46,.6,1.5); spot.position.set(.2,-.15,.1); camera.add(spot);
+spot.target.position.set(0,-.1,-6); camera.add(spot.target);
+const monLight=new THREE.PointLight(0xff1a0a,0,24,2); scene.add(monLight);
+const lampLights=[];
+
+function resize(){
+ if(document.activeElement===$('chatIn')&&G.sizeSet)return;
+ const w=window.innerWidth,h=window.innerHeight;
+ renderer.setSize(w,h,false); camera.aspect=w/h; G.baseFov=w/h<1?86:70; camera.fov=G.baseFov; camera.updateProjectionMatrix(); G.sizeSet=true;
+}
+window.addEventListener('resize',resize); window.addEventListener('orientationchange',()=>setTimeout(resize,300));
+resize();
+
+/* ---------- textures ---------- */
+function ctex(w,h,fn){const c=document.createElement('canvas');c.width=w;c.height=h;fn(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=2;return t}
+const speck=(x,w,h,n,cols,sz)=>{for(let i=0;i<n;i++){x.fillStyle=pick(cols);x.fillRect(Math.random()*w,Math.random()*h,rand(1,sz),rand(1,sz))}};
+const tGround=ctex(256,256,(x,w,h)=>{x.fillStyle='#2d2a20';x.fillRect(0,0,w,h);speck(x,w,h,6000,['rgba(10,30,10,.35)','rgba(70,55,35,.3)','rgba(0,0,0,.3)','rgba(90,90,60,.12)'],4)});
+tGround.repeat.set(90,90);
+const tDirt=ctex(128,128,(x,w,h)=>{x.fillStyle='#4a3b2a';x.fillRect(0,0,w,h);speck(x,w,h,2500,['rgba(0,0,0,.25)','rgba(120,100,70,.2)'],3)});
+const tAsph=ctex(256,256,(x,w,h)=>{x.fillStyle='#2b2c2e';x.fillRect(0,0,w,h);speck(x,w,h,6000,['rgba(255,255,255,.07)','rgba(0,0,0,.25)'],3);x.strokeStyle='rgba(0,0,0,.6)';x.lineWidth=1.5;for(let i=0;i<10;i++){x.beginPath();let px=Math.random()*w,py=Math.random()*h;x.moveTo(px,py);for(let k=0;k<6;k++){px+=rand(-30,30);py+=rand(-30,30);x.lineTo(px,py)}x.stroke()}});
+tAsph.repeat.set(35,35);
+const tConc=ctex(128,128,(x,w,h)=>{x.fillStyle='#55534d';x.fillRect(0,0,w,h);speck(x,w,h,2500,['rgba(255,255,255,.07)','rgba(0,0,0,.2)'],3)});
+const tPlast=ctex(256,256,(x,w,h)=>{x.fillStyle='#867f70';x.fillRect(0,0,w,h);speck(x,w,h,4000,['rgba(255,255,255,.06)','rgba(0,0,0,.14)'],3);for(let i=0;i<40;i++){x.fillStyle=`rgba(0,0,0,${rand(.04,.12)})`;x.fillRect(Math.random()*w,Math.random()*h*.5,rand(2,8),rand(40,200))}for(let i=0;i<10;i++){x.fillStyle='rgba(20,40,20,.12)';x.beginPath();x.arc(Math.random()*w,Math.random()*h,rand(10,36),0,7);x.fill()}});
+const tRoof=ctex(128,128,(x,w,h)=>{x.fillStyle='#33292a';x.fillRect(0,0,w,h);for(let y=0;y<h;y+=16){x.fillStyle='rgba(0,0,0,.4)';x.fillRect(0,y,w,2)}speck(x,w,h,1200,['rgba(255,255,255,.05)','rgba(0,0,0,.2)'],3)});
+const tWood=ctex(128,128,(x,w,h)=>{x.fillStyle='#5a4328';x.fillRect(0,0,w,h);for(let i=0;i<w;i+=32){x.fillStyle='rgba(0,0,0,.45)';x.fillRect(i,0,2,h)}speck(x,w,h,1500,['rgba(0,0,0,.2)','rgba(150,110,60,.12)'],3)});
+const tGlass=ctex(128,128,(x,w,h)=>{x.clearRect(0,0,w,h);for(let i=0;i<14;i++){const a=rand(0,6.28),r=rand(10,52);const cx=64+Math.cos(a)*r,cy=64+Math.sin(a)*r;x.fillStyle='rgba(215,238,255,.9)';x.strokeStyle='#fff';x.beginPath();x.moveTo(cx,cy);x.lineTo(cx+rand(-14,14),cy+rand(-14,14));x.lineTo(cx+rand(-14,14),cy+rand(-14,14));x.closePath();x.fill();x.stroke()}});
+tGlass.wrapS=tGlass.wrapT=THREE.ClampToEdgeWrapping;
+const tGlow=ctex(64,64,(x,w,h)=>{const g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.fillRect(0,0,w,h)});
+tGlow.wrapS=tGlow.wrapT=THREE.ClampToEdgeWrapping;
+
+/* ---------- batching ---------- */
+const L=p=>new THREE.MeshLambertMaterial(p);
+const _q=new THREE.Quaternion(),_e=new THREE.Euler(),_s=new THREE.Vector3(1,1,1),_p=new THREE.Vector3();
+function mat(x,y,z,ry=0,rx=0,rz=0){_e.set(rx,ry,rz,'YXZ');_q.setFromEuler(_e);_p.set(x,y,z);return new THREE.Matrix4().compose(_p,_q,_s)}
+const jit=(hex,a=.15)=>{const c=new THREE.Color(hex);c.multiplyScalar(1+rand(-a,a));return c};
+function boxG(sx,sy,sz,ts=3){const g=new THREE.BoxGeometry(sx,sy,sz);const uv=g.attributes.uv;const dims=[[sz,sy],[sz,sy],[sx,sz],[sx,sz],[sx,sy],[sx,sy]];
+ for(let f=0;f<6;f++)for(let k=0;k<4;k++){const i=f*4+k;uv.setXY(i,uv.getX(i)*dims[f][0]/ts,uv.getY(i)*dims[f][1]/ts)}return g}
+class Batch{
+ constructor(){this.p=[];this.n=[];this.u=[];this.c=[];this.i=[];this.off=0}
+ add(geo,m,color){const col=color&&color.isColor?color:new THREE.Color(color||'#888');const pa=geo.attributes.position,na=geo.attributes.normal,ua=geo.attributes.uv;
+  const v=new THREE.Vector3();const nm=new THREE.Matrix3().getNormalMatrix(m);
+  for(let k=0;k<pa.count;k++){v.fromBufferAttribute(pa,k).applyMatrix4(m);this.p.push(v.x,v.y,v.z);v.fromBufferAttribute(na,k).applyMatrix3(nm).normalize();this.n.push(v.x,v.y,v.z);this.u.push(ua.getX(k),ua.getY(k));this.c.push(col.r,col.g,col.b)}
+  const idx=geo.index;for(let k=0;k<idx.count;k++)this.i.push(idx.getX(k)+this.off);this.off+=pa.count}
+ geometry(){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(this.p,3));g.setAttribute('normal',new THREE.Float32BufferAttribute(this.n,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(this.u,2));g.setAttribute('color',new THREE.Float32BufferAttribute(this.c,3));g.setIndex(this.i);return g}
+ build(material){const m=new THREE.Mesh(this.geometry(),material);m.frustumCulled=false;scene.add(m);return m}
+}
+const BT={walls:new Batch(),roofs:new Batch(),floors:new Batch(),lots:new Batch(),props:new Batch(),furn:new Batch(),winD:new Batch(),winL:new Batch(),dirt:new Batch()};
+
+/* ---------- world data ---------- */
+const solids=[],buildings=[],footprints=[],lootAll=[],noiseObjs=[],projs=[];
+const tgrid=new Map(),TC=4;
+const tk=(a,b)=>(a+1000)*4000+(b+1000);
+function tAdd(x,z){const k=tk(Math.floor(x/TC),Math.floor(z/TC));let a=tgrid.get(k);if(!a){a=[];tgrid.set(k,a)}a.push(x,z)}
+function tNear(x,z,r){const cx=Math.floor(x/TC),cz=Math.floor(z/TC);for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){const a=tgrid.get(tk(cx+i,cz+j));if(a)for(let k=0;k<a.length;k+=2){if((a[k]-x)**2+(a[k+1]-z)**2<r*r)return true}}return false}
+function collide(x,z,r){
+ for(let it=0;it<2;it++){
+  for(let i=0;i<solids.length;i++){const s=solids[i];if(x<s[0]-r||x>s[2]+r||z<s[1]-r||z>s[3]+r)continue;
+   const nx=clamp(x,s[0],s[2]),nz=clamp(z,s[1],s[3]);const dx=x-nx,dz=z-nz;const d2=dx*dx+dz*dz;if(d2>=r*r)continue;
+   if(d2>1e-8){const d=Math.sqrt(d2);x=nx+dx/d*r;z=nz+dz/d*r}
+   else{const l=x-s[0],rr=s[2]-x,t=z-s[1],b=s[3]-z;const m=Math.min(l,rr,t,b);if(m===l)x=s[0]-r;else if(m===rr)x=s[2]+r;else if(m===t)z=s[1]-r;else z=s[3]+r}}
+  const cx=Math.floor(x/TC),cz=Math.floor(z/TC);
+  for(let i=-1;i<=1;i++)for(let j=-1;j<=1;j++){const a=tgrid.get(tk(cx+i,cz+j));if(!a)continue;
+   for(let k=0;k<a.length;k+=2){const dx=x-a[k],dz=z-a[k+1];const rr=r+.5;const d2=dx*dx+dz*dz;if(d2<rr*rr&&d2>1e-8){const d=Math.sqrt(d2);x=a[k]+dx/d*rr;z=a[k+1]+dz/d*rr}}}
+ }
+ return [clamp(x,-285,285),clamp(z,-285,285)];
+}
+const inSolid=(x,z)=>{for(const s of solids)if(x>s[0]-.3&&x<s[2]+.3&&z>s[1]-.3&&z<s[3]+.3)return true;return false};
+const pathX=z=>Math.sin(z*.035)*7*clamp((z-95)/40,0,1);
+
+/* ---------- ground + forest ---------- */
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(700,700),L({map:tGround}));ground.rotation.x=-Math.PI/2;scene.add(ground);
+
+function buildForest(){
+ const tb=new Batch(),I=new THREE.Matrix4();
+ const trunk=new THREE.CylinderGeometry(.16,.32,6,6);trunk.translate(0,3,0);
+ const c1=new THREE.ConeGeometry(2.4,6.5,7);c1.translate(0,7.6,0);
+ const c2=new THREE.ConeGeometry(1.7,5,7);c2.translate(0,11,0);
+ tb.add(trunk,I,'#3a2a1c');tb.add(c1,I,'#12261a');tb.add(c2,I,'#0e2016');
+ const N=1400;const im=new THREE.InstancedMesh(tb.geometry(),L({vertexColors:true}),N);im.frustumCulled=false;
+ let cnt=0;const m4=new THREE.Matrix4(),q=new THREE.Quaternion(),sc=new THREE.Vector3(),ps=new THREE.Vector3(),ax=new THREE.Vector3(0,1,0);
+ for(let tries=0;tries<9000&&cnt<N;tries++){
+  const x=rand(-285,285),z=rand(-285,285);
+  if(Math.abs(x)<104&&Math.abs(z)<104)continue;
+  if(z>90&&Math.abs(x-pathX(z))<3.8)continue;
+  if(tNear(x,z,2.8))continue;
+  const s=rand(.8,1.7);q.setFromAxisAngle(ax,rand(0,6.28));sc.set(s,s*rand(.9,1.25),s);ps.set(x,0,z);m4.compose(ps,q,sc);im.setMatrixAt(cnt,m4);tAdd(x,z);cnt++;
+ }
+ im.count=cnt;im.instanceMatrix.needsUpdate=true;scene.add(im);
+ // rocks
+ const R=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(1,0),L({color:0x3a3a38}),140);R.frustumCulled=false;let rc=0;
+ for(let tries=0;tries<500&&rc<140;tries++){const x=rand(-285,285),z=rand(-285,285);if(Math.abs(x)<100&&Math.abs(z)<100)continue;if(z>90&&Math.abs(x-pathX(z))<3)continue;
+  q.setFromAxisAngle(ax,rand(0,6.28));const s=rand(.5,1.6);sc.set(s*1.3,s*.7,s);ps.set(x,.2,z);m4.compose(ps,q,sc);R.setMatrixAt(rc++,m4)}
+ R.count=rc;scene.add(R);
+ // dirt path
+ for(let z=238;z>86;z-=7){const x=pathX(z),x2=pathX(z-7);const ang=Math.atan2(x2-x,-7);
+  BT.dirt.add(new THREE.PlaneGeometry(4.6,7.6).rotateX(-Math.PI/2),mat(x,.03,z-3.5,ang),jit('#8a7a68',.12))}
+ // scarecrows
+ [[205,1],[158,-1],[118,1]].forEach(([z,s])=>{const x=pathX(z)+s*3.6;
+  BT.props.add(new THREE.CylinderGeometry(.06,.07,2.4,5),mat(x,1.2,z),'#3a2a1a');
+  BT.props.add(new THREE.BoxGeometry(1.7,.07,.07),mat(x,1.75,z,rand(-.4,.4)),'#3a2a1a');
+  BT.props.add(new THREE.SphereGeometry(.22,6,5),mat(x,2.45,z),'#6a5a3a');
+  BT.props.add(new THREE.ConeGeometry(.3,.35,6),mat(x,2.75,z),'#1a1410');
+  BT.props.add(new THREE.BoxGeometry(.5,.7,.15),mat(x,1.4,z),'#2a2018')});
+ // gate
+ BT.props.add(boxG(.9,6,.9,2),mat(-4.3,3,94),'#4a463f');BT.props.add(boxG(.9,6,.9,2),mat(4.3,3,94),'#4a463f');
+ BT.props.add(boxG(9.5,.5,.6,2),mat(0,6.2,94),'#3a362f');
+ solids.push([-4.75,93.5,-3.85,94.5],[3.85,93.5,4.75,94.5]);
+ sign('بلدة الصمت',0,5.2,94.4,0,6.6,1.6,'#9a5a3a');
+}
+function sign(text,x,y,z,ry,w,h,col){
+ const t=ctex(512,128,(c,cw,ch)=>{c.fillStyle='#1a1210';c.fillRect(0,0,cw,ch);c.strokeStyle='#5a2a20';c.lineWidth=6;c.strokeRect(4,4,cw-8,ch-8);c.fillStyle=col||'#8a3a2a';c.font='bold 64px Tajawal,Tahoma,Arial';c.textAlign='center';c.textBaseline='middle';c.direction='rtl';c.fillText(text,cw/2,ch/2+4)});
+ t.wrapS=t.wrapT=THREE.ClampToEdgeWrapping;
+ const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),L({map:t,emissive:0x1a0c08}));m.position.set(x,y,z);m.rotation.y=ry;scene.add(m);
+}
+
+/* ---------- town ---------- */
+const glassGeo=new THREE.PlaneGeometry(1.4,1.4),glassMat=L({map:tGlass,transparent:true,alphaTest:.3,color:0xcfe6ff,emissive:0x182430});
+const canGeo=new THREE.CylinderGeometry(.09,.09,.22,8),canMat=L({color:0x9a9a9a,emissive:0x1c1c1c});
+const lootMat=L({color:0x6a4a22,emissive:0x1f1200});
+const glowMat=new THREE.SpriteMaterial({map:tGlow,color:0xffaa55,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false,opacity:.5});
+function addGlass(x,z,s=1){const m=new THREE.Mesh(glassGeo,glassMat);m.rotation.x=-Math.PI/2;m.rotation.z=rand(0,6.28);m.position.set(x,.17,z);m.scale.setScalar(s*rand(.9,1.4));scene.add(m);noiseObjs.push({type:'glass',x,z,r:.95,m,active:true,warned:false})}
+function addCan(x,z){const m=new THREE.Mesh(canGeo,canMat);m.rotation.z=Math.PI/2;m.rotation.y=rand(0,6.28);m.position.set(x,.12,z);scene.add(m);noiseObjs.push({type:'can',x,z,r:.8,m,active:true,warned:false,kick:null})}
+function makeLoot(b,x,z){const m=new THREE.Mesh(new THREE.BoxGeometry(.6,.4,.45),lootMat);m.position.set(x,.34,z);m.rotation.y=rand(0,3);scene.add(m);
+ const s=new THREE.Sprite(glowMat.clone());s.position.set(x,.8,z);s.scale.setScalar(1.2);scene.add(s);
+ const l={x,z,m,s,done:false,hint:false,b};b.loot.push(l);lootAll.push(l)}
+
+function wall(a,b,c,d,y0,y1,o={}){
+ const win=o.win!==false,solid=o.solid!==false;const sx=b-a,sz=d-c,sy=y1-y0;if(sx<.05||sz<.05||sy<.05)return;
+ BT.walls.add(boxG(sx,sy,sz,3),mat((a+b)/2,y0+sy/2,(c+d)/2),jit('#8a8274',.12));
+ if(solid)solids.push([a,c,b,d]);
+ if(win&&sy>3.5){const along=sx>sz;const len=along?sx:sz;const rows=sy>5?[1.8,3.9]:[1.9];
+  for(let s=1.8;s<len-1.2;s+=4.3){for(const ry of rows){const lit=Math.random()<.07;const B=lit?BT.winL:BT.winD;const g=new THREE.PlaneGeometry(1.4,1.3);
+   if(along){const wx=a+s;B.add(g,mat(wx,ry,c-.03,Math.PI),'#fff');B.add(g,mat(wx,ry,d+.03,0),'#fff')}
+   else{const wz=c+s;B.add(g,mat(a-.03,ry,wz,-Math.PI/2),'#fff');B.add(g,mat(b+.03,ry,wz,Math.PI/2),'#fff')}}}}
+}
+function furnish(b,type,front,vx,gx){
+ const {x0,x1,z0,z1,cx}=b;
+ const table=(x,z)=>{BT.furn.add(boxG(1.5,.1,1),mat(x,.85,z),jit('#4a3320'));BT.furn.add(boxG(.2,.8,.2),mat(x,.45,z),'#2a1c10');solids.push([x-.75,z-.5,x+.75,z+.5]);
+  for(let k=0;k<3;k++){const a=rand(0,6.28),qx=x+Math.cos(a)*1.1,qz=z+Math.sin(a)*.9;BT.furn.add(boxG(.45,.06,.45),mat(qx,.5,qz,a),'#3a2a1a');BT.furn.add(boxG(.45,.5,.06),mat(qx,.78,qz,a),'#3a2a1a')}};
+ const bed=(x,z)=>{BT.furn.add(boxG(2,.5,1.1),mat(x,.3,z),jit('#4a3a3a'));BT.furn.add(boxG(.5,.15,.9),mat(x-.7,.62,z),'#7a7468');solids.push([x-1,z-.55,x+1,z+.55])};
+ const cab=(x,z)=>{BT.furn.add(boxG(1,2,.5),mat(x,1,z),jit('#35261a'));solids.push([x-.5,z-.25,x+.5,z+.25])};
+ const crate=(x,z)=>{BT.furn.add(boxG(.8,.7,.8),mat(x,.4,z,rand(0,3)),jit('#4a3a22'));solids.push([x-.4,z-.4,x+.4,z+.4])};
+ const sofa=(x,z)=>{BT.furn.add(boxG(2.2,.6,.9),mat(x,.4,z),jit('#3a2a2e'));BT.furn.add(boxG(2.2,.7,.2),mat(x,.9,z-.4),'#2e2024');solids.push([x-1.1,z-.45,x+1.1,z+.45])};
+ const okSpot=(x,z)=>Math.abs(x-vx)>2.2&&!(front?z>z1-4.4:z<z0+4.4);
+ if(type==='restaurant'){const cxn=vx>cx?x0+4.8:x1-4.8;const cz=front?z0+1.4:z1-1.4;BT.furn.add(boxG(7,1.1,.8),mat(cxn,.55,cz),'#3a2a1c');solids.push([cxn-3.5,cz-.4,cxn+3.5,cz+.4]);}
+ const n=type==='restaurant'?8:5;
+ for(let i=0,tr=0;i<n&&tr<90;tr++){const x=rand(x0+1.8,x1-1.8),z=rand(z0+2.4,z1-2.4);if(!okSpot(x,z))continue;
+  if(type==='restaurant'){if(Math.random()<.8)table(x,z);else crate(x,z)}else{pick([bed,cab,table,sofa,crate])(x,z)}i++}
+}
+function makeBuilding(cx,cz,w,d,h,front,type,name,danger,nLoot){
+ const x0=cx-w/2,x1=cx+w/2,z0=cz-d/2,z1=cz+d/2,t=.45,dw=2.4,dh=2.7;
+ const b={type,danger,x0,x1,z0,z1,cx,cz,loot:[],warned:false,hinted:false,tin:0};buildings.push(b);footprints.push([x0,z0,x1,z1]);
+ BT.floors.add(boxG(w,.14,d,2.5),mat(cx,.07,cz),jit('#7a6a58',.1));
+ BT.roofs.add(boxG(w+.8,.4,d+.8,3),mat(cx,h+.2,cz),jit('#555',.1));
+ const dx=cx+rand(-w/2+4.5,w/2-4.5);b.doorX=dx;b.doorZ=front?z1:z0;
+ const dz0=front?z1-t:z0,dz1=front?z1:z0+t,bz0=front?z0:z1-t,bz1=front?z0+t:z1;
+ wall(x0,x1,bz0,bz1,0,h);wall(x0,x0+t,z0+t,z1-t,0,h);wall(x1-t,x1,z0+t,z1-t,0,h);
+ wall(x0,dx-dw/2,dz0,dz1,0,h);wall(dx+dw/2,x1,dz0,dz1,0,h);wall(dx-dw/2,dx+dw/2,dz0,dz1,dh,h,{win:false,solid:false});
+ let vx=-9999;
+ if(w>=18){vx=cx+rand(-w/6,w/6);if(Math.abs(vx-dx)<3.4)vx=dx+(dx>cx?-3.8:3.8);const gz=cz+rand(-2.5,2.5);
+  wall(vx-.2,vx+.2,z0+t,gz-1.1,0,h-.3,{win:false});wall(vx-.2,vx+.2,gz+1.1,z1-t,0,h-.3,{win:false});wall(vx-.2,vx+.2,gz-1.1,gz+1.1,2.6,h-.3,{win:false,solid:false})}
+ if(name)sign(name,dx,3.55,front?z1+.06:z0-.06,front?0:Math.PI,4.2,1,'#8a3a2a');
+ furnish(b,type,front,vx);
+ for(let i=0,tr=0;i<nLoot&&tr<90;tr++){const x=rand(x0+1.6,x1-1.6),z=rand(z0+1.6,z1-1.6);if(Math.abs(x-vx)<1.8||(front?z>z1-3.6:z<z0+3.6))continue;makeLoot(b,x,z);i++}
+ const doorSide=front?1:-1;
+ if(danger){for(let k=0;k<7;k++)addGlass(dx+rand(-3.2,3.2),b.doorZ-doorSide*rand(.8,3.6));for(let k=0;k<4;k++)addCan(dx+rand(-3.2,3.2),b.doorZ-doorSide*rand(.8,3.6));addGlass(dx+rand(-1,1),b.doorZ+doorSide*1.3)}
+ else{for(let k=0;k<2;k++)addGlass(rand(x0+2,x1-2),rand(z0+2,z1-2),.8);addCan(rand(x0+2,x1-2),rand(z0+2,z1-2))}
+ return b;
+}
+function deadTree(x,z,s=1){
+ BT.props.add(new THREE.CylinderGeometry(.18*s,.4*s,5*s,6),mat(x,2.5*s,z),'#2a2018');
+ for(let i=0;i<5;i++){const a=rand(0,6.28),l=rand(1.6,2.6)*s;BT.props.add(new THREE.CylinderGeometry(.04*s,.12*s,l,4),mat(x+Math.cos(a)*.6*s,(3+i*.45)*s,z+Math.sin(a)*.6*s,-a+Math.PI/2,0,Math.PI/2.8),'#241a14')}
+ solids.push([x-.4,z-.4,x+.4,z+.4]);
+}
+function buildTown(){
+ const asph=new THREE.Mesh(new THREE.PlaneGeometry(210,210),L({map:tAsph,polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1}));
+ asph.rotation.x=-Math.PI/2;asph.position.y=.03;scene.add(asph);
+ const centers=[[-54,-54],[0,-54],[54,-54],[-54,0],[0,0],[54,0],[-54,54],[0,54],[54,54]];
+ const dangerSet=new Set([1,4,7]);let bi=0;
+ const plan={'0,-54':['restaurant','مطعم النخيل'],'54,0':['restaurant','مقهى الياسمين'],'-54,54':['shop','بقالة الحي'],'54,-54':['shop','عيادة الأمل']};
+ centers.forEach(([bx,bz])=>{
+  BT.lots.add(boxG(40,.12,40,5),mat(bx,.06,bz),jit(bx===0&&bz===0?'#3c3d38':'#55534d',.08));
+  if(bx===0&&bz===0)return;
+  const pl=plan[bx+','+bz]||['house',['منزل قديم','بيت العائلة',null][Math.floor(Math.random()*3)]];
+  makeBuilding(bx+rand(-3,3),bz-10,rand(22,28),rand(14,17),pick([4.6,5.4,6.2]),true,pl[0],pl[1],dangerSet.has(bi++),3);
+  if(Math.random()<.78)makeBuilding(bx+rand(-9,9),bz+12.5,rand(10,12),9,pick([4.2,4.8]),false,'house',null,dangerSet.has(bi++),2);
+  // alley clutter
+  for(let k=0;k<3;k++){const x=bx+rand(-16,16),z=bz+rand(-.5,6);BT.props.add(boxG(.8,.9,.8),mat(x,.5,z,rand(0,3)),jit('#3a3226'));solids.push([x-.4,z-.4,x+.4,z+.4])}
+  addGlass(bx+rand(-12,12),bz+rand(0,6));addCan(bx+rand(-12,12),bz+rand(0,6));
+ });
+ // plaza
+ BT.props.add(new THREE.CylinderGeometry(4.5,4.7,.8,14),mat(0,.5,0),'#4a4a46');
+ BT.props.add(new THREE.CylinderGeometry(3.8,3.8,.1,14),mat(0,.86,0),'#050806');
+ BT.props.add(new THREE.CylinderGeometry(.5,.7,3,8),mat(0,2.2,0),'#4a4a46');
+ solids.push([-4.6,-4.6,4.6,4.6]);
+ deadTree(11,10,1.3);deadTree(-12,-9,1.1);deadTree(-10,13,.9);deadTree(13,-12,1);
+ for(const [x,z] of [[-8,0],[8,1],[1,-9]]){BT.props.add(boxG(2,.5,.6),mat(x,.4,z),'#3a2a1a');BT.props.add(boxG(2,.7,.12),mat(x,.8,z-.3),'#3a2a1a');solids.push([x-1,z-.3,x+1,z+.3])}
+ // cars
+ const cars=[];
+ for(let k=0;k<14;k++){let x,z,al,ok=false;for(let tr=0;tr<30&&!ok;tr++){al=Math.random()<.5;const s=pick([-27,27]);const o=rand(-4,4);x=al?s+o:rand(-85,85);z=al?rand(-85,85):s+o;ok=cars.every(c=>Math.hypot(c[0]-x,c[1]-z)>9)&&Math.abs(x)<92&&Math.abs(z)<92}
+  if(!ok)continue;cars.push([x,z]);const sx=al?1.9:4.3,sz=al?4.3:1.9;const col=jit(pick(['#4a2a26','#2a3238','#3a3a2a','#2e2a30']),.2);
+  BT.props.add(boxG(sx,.9,sz,3),mat(x,.65,z),col);BT.props.add(boxG(al?1.7:2.3,.75,al?2.3:1.7,3),mat(x,1.4,z),col);solids.push([x-sx/2,z-sz/2,x+sx/2,z+sz/2])}
+ // lamps
+ const lamps=[];for(let v=-80;v<=80;v+=32){lamps.push([-21,v],[21,-v],[v,-21],[-v,21])}
+ lamps.forEach(([x,z])=>{BT.props.add(new THREE.CylinderGeometry(.07,.09,5.2,5),mat(x,2.6,z),'#202020');BT.props.add(new THREE.BoxGeometry(.9,.1,.1),mat(x+.4,5.2,z),'#202020');solids.push([x-.15,z-.15,x+.15,z+.15])});
+ [[21,-5],[-21,40]].forEach(([x,z],i)=>{const l=new THREE.PointLight(0xffa860,0,16,2);l.position.set(x+.6,5,z);scene.add(l);lampLights.push({l,base:i?14:18})});
+ // barricades, barrels, dumpsters on streets
+ for(let k=0;k<9;k++){const al=Math.random()<.5,s=pick([-27,27]);const x=al?s+rand(-5,5):rand(-85,85),z=al?rand(-85,85):s+rand(-5,5);
+  if(k%3===0){BT.props.add(boxG(3.2,.9,.3),mat(x,.7,z,al?0:Math.PI/2),'#8a4a1a');solids.push(al?[x-1.6,z-.2,x+1.6,z+.2]:[x-.2,z-1.6,x+.2,z+1.6])}
+  else if(k%3===1){BT.props.add(new THREE.CylinderGeometry(.4,.4,.9,8),mat(x,.5,z),'#3a2a22');solids.push([x-.4,z-.4,x+.4,z+.4])}
+  else{BT.props.add(boxG(2.2,1.3,1.1),mat(x,.7,z,al?0:Math.PI/2),'#2a3a2a');solids.push(al?[x-1.1,z-.55,x+1.1,z+.55]:[x-.55,z-1.1,x+.55,z+1.1])}}
+ // street noise objects
+ for(let k=0;k<24;k++){const al=Math.random()<.5,s=pick([-27,27]);addGlass(al?s+rand(-5,5):rand(-85,85),al?rand(-85,85):s+rand(-5,5))}
+ for(let k=0;k<30;k++){const al=Math.random()<.5,s=pick([-27,27]);addCan(al?s+rand(-5,5):rand(-85,85),al?rand(-85,85):s+rand(-5,5))}
+ // tutorial cans near the gate
+ addCan(pathX(103)+1,103);addCan(pathX(99)-1.2,99);addCan(1,89);addGlass(-1.5,88);
+ // extra dead trees
+ for(let k=0;k<6;k++){const x=pick([-1,1])*rand(30,75),z=pick([-1,1])*rand(30,75);if(!footprints.some(f=>x>f[0]-3&&x<f[2]+3&&z>f[1]-3&&z<f[3]+3))deadTree(x,z,rand(.8,1.2))}
+}
+buildForest();buildTown();
+const matsOpts={vertexColors:true};
+BT.walls.build(L({map:tPlast,vertexColors:true}));
+BT.roofs.build(L({map:tRoof,vertexColors:true}));
+BT.floors.build(L({map:tWood,vertexColors:true}));
+BT.lots.build(L({map:tConc,vertexColors:true}));
+BT.furn.build(L({vertexColors:true}));
+BT.props.build(L({vertexColors:true}));
+BT.dirt.build(L({map:tDirt,vertexColors:true}));
+BT.winD.build(new THREE.MeshBasicMaterial({color:0x010101}));
+BT.winL.build(new THREE.MeshBasicMaterial({color:0x6a4216}));
+
+/* ---------- monster graph ---------- */
+const S=[-92,-27,27,92],nodes=[];
+for(let i=0;i<4;i++)for(let j=0;j<4;j++)nodes.push({x:S[i],z:S[j],i,j,adj:[]});
+nodes.forEach(n=>{[[1,0],[-1,0],[0,1],[0,-1]].forEach(([a,b])=>{const i=n.i+a,j=n.j+b;if(i>=0&&i<4&&j>=0&&j<4)n.adj.push(i*4+j)})});
+function nearestNode(x,z,f){let best=-1,bd=1e12;nodes.forEach((n,k)=>{if(f&&!f(n,k))return;const d=(n.x-x)**2+(n.z-z)**2;if(d<bd){bd=d;best=k}});return best}
+function bfs(a,b){if(a===b)return[a];const prev=new Array(16).fill(-1);prev[a]=a;const q=[a];
+ while(q.length){const c=q.shift();if(c===b)break;for(const nx of nodes[c].adj)if(prev[nx]<0){prev[nx]=c;q.push(nx)}}
+ const path=[];let c=b;while(c!==a){path.push(c);c=prev[c]}path.push(a);return path.reverse()}
+function clear(x0,z0,x1,z1,pad){const d=Math.hypot(x1-x0,z1-z0);const st=Math.max(1,Math.ceil(d/1.5));
+ for(let k=0;k<=st;k++){const px=lerp(x0,x1,k/st),pz=lerp(z0,z1,k/st);for(const f of footprints)if(px>f[0]-pad&&px<f[2]+pad&&pz>f[1]-pad&&pz<f[3]+pad)return false}return true}
+function approachPts(n,tx,tz){if(clear(n.x,n.z,tx,tz,1.8))return[];let p={x:tx,z:n.z};if(clear(n.x,n.z,p.x,p.z,1.8)&&clear(p.x,p.z,tx,tz,1.8))return[p];p={x:n.x,z:tz};if(clear(n.x,n.z,p.x,p.z,1.8)&&clear(p.x,p.z,tx,tz,1.8))return[p];return null}
+
+/* ---------- characters ---------- */
+function buildMonster(){
+ const g=new THREE.Group();
+ const skin=L({color:0x2a1818,emissive:0x1a0504}),dark=L({color:0x120909,emissive:0x0a0202}),glow=new THREE.MeshBasicMaterial({color:0xff2a10}),bone=L({color:0xc8c0a8,emissive:0x302c20});
+ const add=(geo,m,x,y,z,p)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);(p||g).add(o);return o};
+ const torso=add(new THREE.SphereGeometry(1,10,8),skin,0,3.5,0);torso.scale.set(1.35,1.8,.95);
+ const pel=add(new THREE.SphereGeometry(1,8,6),dark,0,2.2,0);pel.scale.set(1,.7,.8);
+ for(let i=0;i<5;i++){const s=add(new THREE.ConeGeometry(.22,1.1,5),dark,0,4.1-i*.55,-.85);s.rotation.x=-1.9}
+ for(let i=0;i<6;i++){const c=add(new THREE.BoxGeometry(.06,rand(.5,1.1),.06),glow,rand(-.7,.7),3.4+rand(-.8,.8),.9);c.rotation.z=rand(-.6,.6)}
+ const legs=[-1,1].map(s=>{const lg=new THREE.Group();lg.position.set(s*.65,2.2,0);g.add(lg);add(new THREE.CylinderGeometry(.34,.22,2.2,6),skin,0,-1.1,0,lg);add(new THREE.BoxGeometry(.5,.25,.9),dark,0,-2.1,.2,lg);return lg});
+ const arms=[-1,1].map(s=>{const a=new THREE.Group();a.position.set(s*1.55,4.5,0);g.add(a);add(new THREE.CylinderGeometry(.24,.18,2.4,6),skin,0,-1.2,0,a);
+  const fa=new THREE.Group();fa.position.set(0,-2.4,0);a.add(fa);add(new THREE.CylinderGeometry(.18,.12,2.2,6),skin,0,-1.1,0,fa);
+  for(let k=-1;k<=1;k++){const cl=add(new THREE.ConeGeometry(.07,.8,4),bone,k*.12,-2.5,.1,fa);cl.rotation.x=Math.PI}
+  a.userData.fa=fa;return a});
+ const head=new THREE.Group();head.position.set(0,5.35,.35);g.add(head);
+ const skull=add(new THREE.SphereGeometry(.8,10,8),skin,0,0,0,head);skull.scale.set(.85,1.05,1.2);
+ const jaw=new THREE.Group();jaw.position.set(0,-.45,.2);head.add(jaw);add(new THREE.BoxGeometry(.7,.22,.9),dark,0,-.1,.35,jaw);
+ for(let k=0;k<6;k++){const t1=add(new THREE.ConeGeometry(.05,.22,4),bone,-.3+k*.12,.08,.75,jaw);const t2=add(new THREE.ConeGeometry(.05,.22,4),bone,-.3+k*.12,-.25,.72,head);t2.rotation.x=Math.PI}
+ const mouth=add(new THREE.BoxGeometry(.5,.06,.7),glow,0,-.38,.55,head);
+ [-1,1].forEach(s=>{const h=add(new THREE.ConeGeometry(.14,1.3,5),dark,s*.5,.75,-.1,head);h.rotation.z=-s*.5;h.rotation.x=-.3});
+ g.scale.setScalar(1.05);g.visible=false;scene.add(g);
+ return {g,legs,arms,head,jaw,glow};
+}
+Mo.parts=buildMonster();Mo.g=Mo.parts.g;
+
+const Co={g:null};
+(function(){
+ const g=new THREE.Group();const cloth=L({color:0x3b4a3c}),pants=L({color:0x232a35}),skin=L({color:0x8a6a55,emissive:0x120a06}),pack=L({color:0x5a3a22});
+ const add=(geo,m,x,y,z,p)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);(p||g).add(o);return o};
+ add(new THREE.BoxGeometry(.5,.7,.3),cloth,0,1.15,0);add(new THREE.SphereGeometry(.17,8,6),skin,0,1.7,0);add(new THREE.BoxGeometry(.4,.5,.2),pack,0,1.2,-.25);
+ const legs=[-1,1].map(s=>{const lg=new THREE.Group();lg.position.set(s*.13,.8,0);g.add(lg);add(new THREE.BoxGeometry(.18,.8,.2),pants,0,-.4,0,lg);return lg});
+ const arms=[-1,1].map(s=>{const a=new THREE.Group();a.position.set(s*.33,1.45,0);g.add(a);add(new THREE.BoxGeometry(.14,.6,.16),cloth,0,-.3,0,a);return a});
+ const gs=new THREE.Sprite(new THREE.SpriteMaterial({map:tGlow,color:0x66ff99,blending:THREE.AdditiveBlending,transparent:true,depthWrite:false,opacity:.6}));gs.position.set(0,1.5,-.4);gs.scale.setScalar(.5);g.add(gs);
+ scene.add(g);Co.g=g;Co.legs=legs;Co.arms=arms;
+})();
+
+/* dust */
+const dustN=260,dustL=new Float32Array(dustN*3),dustP=new Float32Array(dustN*3);
+for(let i=0;i<dustN;i++){dustL[i*3]=rand(-15,15);dustL[i*3+1]=rand(0,8);dustL[i*3+2]=rand(-15,15)}
+const dustGeo=new THREE.BufferGeometry();dustGeo.setAttribute('position',new THREE.BufferAttribute(dustP,3));
+const dust=new THREE.Points(dustGeo,new THREE.PointsMaterial({size:.13,color:0xaab0b0,transparent:true,opacity:.3,depthWrite:false,map:tGlow}));dust.frustumCulled=false;scene.add(dust);
+
+/* ===================== UI HELPERS ===================== */
+let warnTO=0,subTO=0,unread=0;
+function showWarn(t,ms=2500,pulse){const w=$('warn');w.textContent=t;w.classList.add('show');w.classList.toggle('pulse',!!pulse);clearTimeout(warnTO);warnTO=setTimeout(()=>w.classList.remove('show'),ms)}
+function subtitle(t){const s=$('sub');s.innerHTML='<b>سامر:</b> '+t.replace(/</g,'&lt;');s.classList.add('show');clearTimeout(subTO);subTO=setTimeout(()=>s.classList.remove('show'),3800+t.length*55)}
+function addMsg(who,text){const m=document.createElement('div');m.className='msg '+who;m.textContent=text;const box=$('msgs');box.appendChild(m);while(box.children.length>60)box.removeChild(box.firstChild);box.scrollTop=box.scrollHeight}
+const chatOpen=()=>!$('chat').classList.contains('hide');
+const Q={list:[],busy:false};
+function say(text,opt={}){
+ if(G.over||G.won)return;
+ text=styleLine(text,opt);
+ if(opt.urgent)Q.list.unshift({text,opt});else{if(Q.list.length>3)Q.list.shift();Q.list.push({text,opt})}
+ if(!Q.busy)nextSay();
+}
+function nextSay(){
+ const it=Q.list.shift();
+ if(!it){Q.busy=false;$('typing').classList.add('hide');return}
+ Q.busy=true;if(chatOpen())$('typing').classList.remove('hide');
+ const delay=clamp(500+it.text.length*22,700,2300)*(it.opt.urgent?.45:1);
+ setTimeout(()=>{if(G.over||G.won){Q.busy=false;return}deliver(it.text,it.opt);setTimeout(nextSay,450)},delay);
+}
+function deliver(text,opt){
+ addMsg('bot',text);subtitle(text);Aud.blip();
+ if(opt.panic)C.panic=clamp(C.panic+opt.panic,0,100);
+ if(!chatOpen()){unread++;$('chatBadge').textContent=ar(unread);$('chatBadge').classList.remove('hide')}
+ if(opt.whisper)Aud.whisper();
+}
+function styleLine(t,opt){
+ if(opt.raw)return t;
+ if(G.day===2&&Math.random()<.35&&t[0]!=='(')t='(بصوت متعب) '+t;
+ if(G.day===3&&C.panic>55){
+  if(t[0]!=='(')t=pick(['(يهمس) ','(بصوت مرتجف) ','(يلهث) '])+t;
+  if(Math.random()<.5){t=t.replace(/(\)\s)?([\u0621-\u064A]+)/,(m,p,w)=>(p||'')+w[0]+'-'+w)}
+ }
+ return t;
+}
+function relAng(dx,dz){let r=Math.atan2(dx,-dz)+G.yaw;return((r+Math.PI*3)%(Math.PI*2))-Math.PI}
+function dirText(dx,dz){const r=relAng(dx,dz),a=Math.abs(r);if(a<.5)return'أمامك مباشرة';if(a>2.5)return'خلفك';if(a<1.1)return r>0?'أمامك إلى اليمين':'أمامك إلى اليسار';if(a>1.9)return r>0?'خلفك إلى اليمين':'خلفك إلى اليسار';return r>0?'على يمينك':'على يسارك'}
+const timeLabel=fr=>fr>=.2&&fr<.3?'الفجر':fr>=.3&&fr<.7?'النهار':fr>=.7&&fr<.8?'الغروب':'الليل';
+function nearestLoot(){let b=null,bd=1e9;for(const l of lootAll){if(l.done)continue;const d=Math.hypot(l.x-G.px,l.z-G.pz);if(d<bd){bd=d;b=l}}return b?{l:b,d:bd}:null}
+
+/* ===================== DIALOGUE ===================== */
+const norm=s=>s.toLowerCase().replace(/[\u064B-\u0652\u0640]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/[^\u0600-\u06FFa-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+const R={
+ greet:{1:["أهلاً... الحمد لله أنك ما زلت بجانبي. تكلّم بهمس من فضلك.","مرحباً. الصدى هنا يخون الأصوات، فلنتحدث بهدوء."],3:["ه-هل هذا أنت حقاً؟... حسناً، أهلاً. لا ترفع صوتك."]},
+ status:{1:["أنا بخير... متعب فقط. شكراً لسؤالك. وأنت؟ مصباحك لا يزال يعمل؟","بخير ما دمنا معاً."],2:["لا أعلم... أشعر أنني مُراقَب منذ البارحة. لكنني بخير... ربما."],3:["بخير؟... لا. لا أظنني بخير. أسمع أشياء لا يسمعها غيري.","يداي لا تتوقفان عن الارتجاف... أرجوك لا تتركني."]},
+ thanks:{1:["لا شكر على واجب. ابقَ حياً فقط.","نحن فريق. سننجو معاً."],3:["شكراً... كلماتك تُبقيني متماسكاً... بالكاد."]},
+ who:{1:["أنا سامر. كنتُ في رحلة تخييم مع أخي... قبل أن تبتلعنا هذه الغابة.","سامر، مهندس صيانة. لم أتخيل أن مهاراتي ستُستعمل للنجاة من هذا."],3:["أنا سامر... أظن ذلك. أحياناً أنسى أيّ ليلة هذه."]},
+ trust:{1:["أثق بك. ليس لدي خيار آخر في الحقيقة، لكنني أثق بك.","نعم، أثق بك. وأرجو أن تثق بي أيضاً."],2:["أثق بك... لكن لماذا يتبعنا الصوت دائماً حين نكون معاً؟"],3:["هل أثق بك؟... وهل أنت متأكد أنك حيّ أصلاً؟... آسف، لا تؤاخذني."]},
+ fear:{1:["لا تقل هذا. سننجو إن بقينا صامتين وحذرين.","الخوف طبيعي، لكن لا تدعه يتحكم بخطواتك."],2:["أنا أيضاً خائف... لكن ما بيدنا غير الصمود.","كل ليلة تبدو أطول من التي قبلها..."],3:["(يبكي بصمت) سنموت هنا... أعلم ذلك... أريد أمي...","لا أستطيع... لا أستطيع التنفس... قل لي إنها نهاية الكابوس."]},
+ monster:{1:["إنه أعمى لكنه يسمع نبض الأرض نفسه. لا تركض ولا تتحرك إن اقترب. وإن زأر... تجمّد.","لا أعرف ما هو. فقط أعرف أن الصمت هو سلاحنا الوحيد."],2:["أحياناً أظن أن عينيه كانتا مفتوحتين يوماً... وأن شيئاً أعماه عن قصد.","كلما ابتعد الزئير ظننتُ أنه يتنفس خلف الجدار."],3:["لا تذكره! حين نذكره... يسمعنا. أنا متأكد.","(يهمس) إنه ليس وحشاً... إنه عقاب."]},
+ hide:{1:["أقرب مبنى {dir}. ادخل بهدوء؛ الجدران تخفف الصوت وتُقلّل خطر اكتشافه.","المباني أأمن من الشوارع. لكن احذر من الزجاج في المداخل."],3:["(يهمس) داخل البيوت... ربما. لكن النوافذ المضيئة... لا تثق بها."]},
+ search:{1:["فكرة جيدة، سأتفقد الرفوف أيضاً. {loot}","هيا نفتّش. ربما نجد بطاريات. {loot}"],3:["(يهمس) التفتيش؟ الآن؟... حسناً، لكن لا تُصدر صوتاً. {loot}"]},
+ light:{1:["المصباح يستهلك بطاريته. أطفئه حين يكون الطريق واضحاً، وفتّش عن بطاريات جديدة.","لا تسلّطه على النوافذ. لا أريد معرفة من ينظر إلينا من خلفها."],3:["(يهمس) أبقِ الضوء بعيداً عن عيني... أرى أشياء حين يرتجف."]},
+ food:{1:["لا أظن أننا سنجد طعاماً صالحاً. لكن البطاريات والعلب... العلب مفيدة جداً.","الجوع آخر مخاوفي الآن."],3:["(يهمس) حتى الجوع صار صامتاً..."]},
+ can:{1:["علب الصفيح؟ ارمها بعيداً فيتبعها الوحش. إنها أفضل وسيلة للإلهاء.","ارمِ علبة نحو الجهة المعاكسة وابتعد بهدوء، وهو سيذهب إليها."],3:["(يهمس) العلب... نعم... لكن لا ترمها قريباً مني أرجوك."]},
+ town:{1:["البلدة كانت مأهولة منذ سنوات... ثم صمتت فجأة. لا أحد يعرف لماذا.","أظن أن أهلها هربوا... أو اختفوا. الأبواب كلها مفتوحة."],3:["(يهمس) البلدة تعرف أسماءنا..."]},
+ escape:{1:["لا مخرج الآن. الغابة خلفنا أسوأ، ولا طريق يخرج منها. علينا الصمود حتى الفجر الرابع.","الأسطورة تقول: من يصمد ثلاث ليالٍ يُفتح له الطريق."],3:["(يهمس) لا يوجد مخرج... لا يوجد... نحن هنا للأبد."]},
+ help:{1:["اسحب الشاشة للنظر، والعصا للمشي. تجنّب الزجاج والعلب، واحنِ جسدك عند اقتراب الوحش، وإن زأر فاثبت مكانك. وهدّئني إن بدأت أرتجف!"],3:["(يهمس) أهم شيء: لا تتحرك... وأبقِني هادئاً... رجاءً."]},
+ insult:{1:["لستُ غبياً... أنا خائف فقط. هذا يختلف.","هذا ليس وقت الشجار."],3:["(يبكي) نعم... ربما أنا كذلك... ربما نستحق ما سيحدث."]},
+ wait:{1:["حسناً، سأنتظر هنا. أنا أراقب خلفك.","أنا واقف، لا تقلق."],3:["(يهمس) لا تتأخر... لا أحب هذا الصمت..."]},
+ yes:{1:["حسناً.","تمام. أنا معك.","فهمت."],3:["(يهمس) حسناً... حسناً..."]},
+ fallback:{1:["لم أفهم تماماً... لكن ابقَ قريباً وهادئاً.","همم... لا أعرف ماذا أقول. المهم ألا نصدر ضجيجاً."],2:["(يحدّق في الظلام) آسف، شردتُ للحظة... ماذا قلت؟","أسمع صوتك لكن عقلي مشغول بتلك الأصوات هناك..."],3:["لا أستطيع التركيز... كل شيء يهمس... قل لي شيئاً مطمئناً.","(يلهث) ماذا؟... لا، لا أسمع شيئاً سوى قلبي."]}
+};
+const CALM={low:["شكراً... أحتاج هذا فعلاً. أنا بخير الآن.","معك حق. أتنفس ببطء... كل شيء تحت السيطرة."],mid:["ح-حسناً... سأحاول التماسك. ابقَ قريباً مني.","(يتنفس ببطء) شكراً... بدأت أهدأ قليلاً."],high:["(بصوت متقطع) أ-أنا... أحاول... فقط لا تتركني...","(يهمس) حسناً... حسناً... عدّ معي... واحد... اثنان..."]};
+const SHUSH=["(يضع يده على فمه ويومئ برأسه)","(يكتم أنفاسه)... حسناً.","..."];
+const AMB={
+ 1:["ابقَ قريباً مني. الشوارع هنا ضيقة ومليئة بالزجاج.","تذكّر: أي صوت قد يوقظ ذلك الشيء. امشِ ببطء، واحنِ جسدك عند الخطر.","لا تركض إلا إذا اضطررت... الركض يُسمع من بعيد.","اقترب من الصناديق المتوهجة واضغط زر التفتيش. سأراقب الطريق.","أخبرني إن احتجت شيئاً، فقط اكتب لي.","المصباح يستهلك بطاريته. فتّش عن بطاريات في المباني.","أظن أن المطاعم المهجورة فيها مخازن... لنتفقد الغرف الخلفية.","الأضواء الخافتة في النوافذ... ليست كهرباء."],
+ 2:["الغريب أن الشوارع تتغير... هذا المنزل لم يكن هنا بالأمس، أليس كذلك؟","أسمع خطوات بعيدة... أو ربما هو قلبي.","لم أنم منذ يومين. أرى أشياء تتحرك عند حافة الضوء.","هل لاحظت أن الوحش يتبع صوتنا أنت وأنا بالتحديد؟","أحياناً أشعر أن أحداً يهمس باسمي من داخل البيوت.","إن حدث لي شيء... كمل الطريق ولا تلتفت."],
+ 3:["(يهمس) لن نخرج من هنا أحياء... أعلم ذلك.","(يهمس) هل أنت متأكد أنك لم تجلبه إلينا؟","ل-لا أستطيع التنفس... أرجوك قل شيئاً.","هناك من ينظر إلينا من النافذة... لا، لا تلتفت!","ماذا لو كنا نحن الأشباح؟","أريد أن أصرخ... أريد أن أصرخ فقط ليتوقف هذا الصمت.","(يبكي بصمت) أريد أمي...","لا تتركني وحدي مهما حدث. وعدني.","(يهمس) الجدران تتنفس... أسمعها..."]
+};
+const NOTES=["«اليوم الثالث بعد الإنذار. أمرونا بالصمت التام. الكل يعلم أن الشيء يسمع كل شيء.» — دفتر مدير البلدة","«لا تُشعل المولّد. لا تغلق الباب بقوة. لا تبكِ. لا تبكِ أبداً.»","«عيناه مخيطتان من الداخل... لكنه يعرف مكانك من نبض قلبك.»","«وضعنا العلب والزجاج في الشوارع لتُنذرنا. لكن الأطفال كانوا يلعبون... كانوا يلعبون.»","«إذا سمعتَ الزئير فلديك ثلاث ثوانٍ لتتجمّد. ثلاث ثوانٍ فقط.»","«من يبقى ثلاث ليالٍ في البلدة يشرق عليه الفجر الرابع. هكذا تقول الحكاية... لم يجرّب أحد.»","«أمي لم تعد. سمعتها تناديني من الشارع. لم أفتح الباب. أظنها لم تكن هي.»","«رفيقك يخاف؟ أبقِه هادئاً. الخوف صوت، حتى لو لم يصدر شيئاً.»","«المطعم كان ممتلئاً ليلة الزئير الأولى. لم يخرج أحد... هل تشمّ الرائحة؟»","«لا تثق بالنوافذ المضيئة.»"];
+const pr=(tbl)=>{const a=tbl[G.day]||tbl[1];return pick(a)};
+function replyTo(raw){
+ const t=norm(raw);const has=(...k)=>k.some(w=>t.includes(norm(w)));
+ const near=Mo.state!=='hidden'&&Mo.state!=='roaring'&&Mo.d<48;
+ let key='fallback';
+ if(has('اهدا','اهدي','اهدى','لا تخف','لاتخف','لا تخاف','تنفس','طمن','انا معك','سنكون بخير','لا تقلق','تماسك','سننجو'))key='calm';
+ else if(has('اسكت','اصمت','صه','اشش','ششش','هسس','اخرس','سكوت','لا تتكلم'))key='shush';
+ else if(has('كيف حالك','انت بخير','كيفك','شلونك'))key='status';
+ else if(has('شكرا','ممتن','يعطيك'))key='thanks';
+ else if(has('من انت','اسمك','مين انت'))key='who';
+ else if(has('تثق','تكذب','خاين','تخونني'))key='trust';
+ else if(has('نموت','سنموت','موت','خايف','خائف','اخاف','رعب','نهايه','مرعب'))key='fear';
+ else if(has('وحش','مخلوق','شيطان','زئير','عفريت','شبح','كائن','ما هذا','ما ذلك'))key='monster';
+ else if(has('اختبا','اختبي','نختبي','اخفي','مخبا','احتمي'))key='hide';
+ else if(has('فتش','ابحث','تفتيش','بحث','ادخل','مطعم','منزل','بيت','مبني','غرفه'))key='search';
+ else if(has('بطاريه','مصباح','ضوء','نور','اطفئ'))key='light';
+ else if(has('طعام','اكل','جوع','جائع','ماء','عطش'))key='food';
+ else if(has('علبه','علب','ارمي','رمي','الهاء'))key='can';
+ else if(has('وين','اين','اتجاه','نروح','نذهب','نمشي','الطريق','وجهه','فين'))key='where';
+ else if(has('بلده','مدينه','قريه'))key='town';
+ else if(has('نهرب','نخرج','نغادر','نرحل','مخرج','هروب','نعود'))key='escape';
+ else if(has('الوقت','متي','الفجر','الصباح','الليل','كم بقي','كم باقي','اليوم'))key='time';
+ else if(has('ساعد','مساعده','ماذا افعل','ما العمل','كيف العب','تعليمات'))key='help';
+ else if(has('مرحبا','اهلا','السلام','هلا','هاي','صباح الخير','مساء الخير'))key='greet';
+ else if(has('غبي','احمق','تافه','جبان'))key='insult';
+ else if(has('انتظر','قف','توقف','لحظه'))key='wait';
+ else if(has('نعم','حسنا','تمام','اوكي','ok'))key='yes';
+ if(near&&key!=='calm'&&key!=='shush'){
+  C.panic=clamp(C.panic+6,0,100);
+  say(pick(["(يهمس بذعر) اصمت! إنه قريب جداً... لا تكتب ولا تتحرك!","(بالكاد يُسمع) ششش... أسمع خطواته. فقط اثبت."]),{urgent:true,raw:true});return;
+ }
+ if(key==='calm'){
+  let amt=30;if(G.t-C.lastCalm<8)amt=9;C.lastCalm=G.t;C.panic=Math.max(0,C.panic-amt);C.quiet=Math.max(C.quiet,6);
+  const lvl=C.panic>65?'high':C.panic>35?'mid':'low';
+  say(amt<10?pick(["أنت تكرر نفس الكلمات... لكنها تنفع قليلاً.","نعم نعم، سمعتك... أحاول."]):pick(CALM[lvl]),{raw:amt<10});return;
+ }
+ if(key==='shush'){C.panic=Math.max(0,C.panic-10);C.quiet=Math.max(C.quiet,12);say(pick(SHUSH),{raw:true});return}
+ if(key==='insult')C.panic=clamp(C.panic+8,0,100);
+ if(key==='fear')C.panic=clamp(C.panic+7,0,100);
+ let line;
+ if(key==='where'){
+  if(G.phase==='forest'){const dx=-G.px,dz=90-G.pz;line=`البلدة ${dirText(dx,dz)} على بعد ${ar(Math.hypot(dx,dz))} متراً تقريباً. اتبع السهم في الأعلى.`}
+  else{const n=nearestLoot();if(n){n.l.hint=true;G.hintT=45;line=`أقرب مكان لم نفتّشه ${dirText(n.l.x-G.px,n.l.z-G.pz)} على بعد ${ar(n.d)} متراً. وضعتُ لك إشارة.`}else line="لقد فتّشنا كل شيء تقريباً... علينا الآن أن نصمد فقط."}
+ }else if(key==='hide'){
+  let best=null,bd=1e9;for(const b of buildings){const d=Math.hypot(b.doorX-G.px,b.doorZ-G.pz);if(d<bd&&!b.danger){bd=d;best=b}}
+  line=pr(R.hide).replace('{dir}',best?dirText(best.doorX-G.px,best.doorZ-G.pz)+' ('+ar(bd)+' م)':'قريب');
+ }else if(key==='search'){
+  const n=nearestLoot();let ex='';if(n){n.l.hint=true;G.hintT=45;ex=`أرى صندوقاً ${dirText(n.l.x-G.px,n.l.z-G.pz)}.`}
+  line=pr(R.search).replace('{loot}',ex);
+ }else if(key==='time'){
+  line=`الوقت الآن ${timeLabel(G.fr)}، اليوم ${ar(G.day)} من ٣. باقٍ نحو ${mmss(3*CYCLE-G.t)} حتى الفجر الرابع.`;
+ }else line=pr(R[key]);
+ say(line);
+}
+function sendChat(txt){
+ txt=txt.trim().slice(0,160);if(!txt)return;
+ addMsg('you',txt);
+ setTimeout(()=>replyTo(txt),350+Math.random()*500);
+}
+
+/* ===================== NOISE & MONSTER ===================== */
+function emitNoise(x,z,loud,lethal,why){
+ G.noiseEvents++;hearMonster(x,z,loud);
+ if(lethal){G.spike=1.5;G.spikeR=loud*32;G.spikeWhy=why}
+}
+function hearMonster(x,z,loud){
+ const m=Mo;if(!G.monsterOn)return;
+ if(m.state==='hidden'){if(loud>=.45){m.next=Math.min(m.next,rand(2,4.5));m.alert={x,z}}return}
+ if(m.state==='roaring'){if(loud>=.45)m.alert={x,z};return}
+ if(m.state==='lunge')return;
+ const d=Math.hypot(m.x-x,m.z-z);
+ if(d<28+85*loud){m.huntLeft=Math.min(m.huntLeft+6,80);investigate(x,z,d)}
+}
+function planPath(tx,tz){
+ const m=Mo;let a=nearestNode(m.x,m.z,n=>clear(m.x,m.z,n.x,n.z,1.2));if(a<0)a=nearestNode(m.x,m.z);
+ let b=nearestNode(tx,tz,n=>approachPts(n,tx,tz)!==null);let ap=null;
+ if(b<0)b=nearestNode(tx,tz);else ap=approachPts(nodes[b],tx,tz);
+ const pts=bfs(a,b).map(k=>({x:nodes[k].x,z:nodes[k].z}));
+ if(ap){pts.push(...ap);pts.push({x:tx,z:tz})}
+ m.path=pts;
+}
+function investigate(x,z,d){
+ const e=3+d*.16;Mo.state='investigate';planPath(x+rand(-e,e),z+rand(-e,e));
+}
+function roamNext(){
+ const m=Mo;Mo.state='roam';const cur=nearestNode(m.x,m.z);const pn=nearestNode(G.px,G.pz);let k,g=0;
+ do{k=Math.floor(Math.random()*16);g++}while(g<20&&(k===cur||(k===pn&&Math.random()>(G.L<.35?.35:.12))));
+ let a=nearestNode(m.x,m.z,n=>clear(m.x,m.z,n.x,n.z,1.2));if(a<0)a=cur;
+ m.path=bfs(a,k).map(i=>({x:nodes[i].x,z:nodes[i].z}));
+}
+function beginLeave(){
+ const m=Mo;m.state='leaving';let a=nearestNode(m.x,m.z,n=>clear(m.x,m.z,n.x,n.z,1.2));if(a<0)a=nearestNode(m.x,m.z);
+ const b=nearestNode(m.x,m.z,n=>Math.abs(n.x)===92||Math.abs(n.z)===92);
+ m.path=bfs(a,b).map(i=>({x:nodes[i].x,z:nodes[i].z}));
+}
+function monsterTimer(){const r=[0,[55,85],[40,62],[26,44]][G.day];let t=rand(r[0],r[1]);if(G.L<.35)t*=.78;return t}
+function pickSpawn(rx,rz){
+ let c=nodes.map((n,k)=>k).filter(k=>Math.hypot(nodes[k].x-G.px,nodes[k].z-G.pz)>=50);if(!c.length)c=nodes.map((n,k)=>k);
+ c.sort((a,b)=>Math.hypot(nodes[a].x-rx,nodes[a].z-rz)-Math.hypot(nodes[b].x-rx,nodes[b].z-rz));return pick(c.slice(0,3));
+}
+function startRoar(){
+ const ref=Mo.alert||{x:G.px,z:G.pz};Mo.spawnNode=pickSpawn(ref.x,ref.z);const n=nodes[Mo.spawnNode];
+ Mo.state='roaring';Mo.timer=3.6;
+ const dist=Math.hypot(n.x-G.px,n.z-G.pz),rel=relAng(n.x-G.px,n.z-G.pz);
+ Aud.roar(clamp(1.15-dist/230,.55,1),clamp(dist/160,0,.8),Math.sin(rel));
+ G.shake=Math.max(G.shake,1.1);G.fearBoost=.6;
+ showWarn('🔊 زئير مرعب! تجمّد... لا تُصدر أي صوت',3600,true);
+ if(navigator.vibrate)navigator.vibrate([300,100,500]);
+ say(pick({1:["(يهمس) سمعتَ ذلك؟! لا تتحرك... لا تتنفس!","اثبت مكانك! إنه قادم!"],2:["(يرتجف) هذا هو... هذا هو! لا تتحرك!","اللعنة... زأر مرة أخرى! تجمّد!"],3:["(يكتم بكاءه) لا... لا... أرجوك لا... لا تتحرك!","(يهمس بهلع) جاء... جاء ليأخذنا... اثبت!"]}[G.day]),{urgent:true,raw:true,panic:10});
+}
+function spawnMonster(){
+ const m=Mo,n=nodes[m.spawnNode];m.x=n.x;m.z=n.z;m.g.visible=true;m.huntLeft=rand(45,70);m.announced=false;m.d=Math.hypot(G.px-m.x,G.pz-m.z);
+ if(m.alert){const a=m.alert;m.alert=null;investigate(a.x,a.z,m.d)}else roamNext();
+}
+function hideMonster(){
+ const m=Mo;m.g.visible=false;m.state='hidden';m.next=monsterTimer();m.announced=false;monLight.intensity=0;m.d=999;m.spd=0;
+ const dist=Math.hypot(m.x-G.px,m.z-G.pz);Aud.roar(.3,.85,Math.sin(relAng(m.x-G.px,m.z-G.pz)));
+ say(pick(["(يتنفس بصعوبة) ...ذهب. أظنه ذهب.","اختفى الصوت... لكن لا تُصدر ضجيجاً، قد يعود."]),{raw:true,urgent:true});
+}
+function walkPath(dt,speed){
+ const m=Mo;m.spd=speed;if(!m.path.length)return true;
+ const p=m.path[0],dx=p.x-m.x,dz=p.z-m.z,d=Math.hypot(dx,dz),st=speed*dt;
+ if(d<=st+.05){m.x=p.x;m.z=p.z;m.path.shift();return m.path.length===0}
+ m.x+=dx/d*st;m.z+=dz/d*st;m.ang+=angDiff(m.ang,Math.atan2(dx,dz))*clamp(dt*4,0,1);return false;
+}
+function updateMonster(dt){
+ const m=Mo;
+ if(!G.monsterOn||G.won){return}
+ if(m.state==='hidden'){m.next-=dt;if(m.next<=0)startRoar();return}
+ if(m.state==='roaring'){m.timer-=dt;if(m.timer<=0)spawnMonster();return}
+ const dx=G.px-m.x,dz=G.pz-m.z;m.d=Math.hypot(dx,dz);m.huntLeft-=dt;
+ if(m.state!=='lunge'&&!G.over){
+  if(m.d<G.lethalR){m.state='lunge';G.deathWhy=G.spike>0?G.spikeWhy:G.mode;Aud.roar(.9,.1,0);showWarn('💀',900)}
+  else if(m.d<1.5){m.state='lunge';G.deathWhy='bump'}
+ }
+ switch(m.state){
+  case 'roam':if(walkPath(dt,3.4+G.day*.35))roamNext();if(m.huntLeft<=0)beginLeave();break;
+  case 'investigate':if(walkPath(dt,5.6+G.day*.3)){m.state='search';m.sniff=rand(6,9);m.wT=0;m.path=[]}break;
+  case 'search':{m.spd=0;m.sniff-=dt;m.wT-=dt;
+   if(m.wT<=0){m.wT=rand(2.5,4);for(let k=0;k<6;k++){const a=rand(0,6.28),r=rand(3,6),px=m.x+Math.cos(a)*r,pz=m.z+Math.sin(a)*r;if(clear(m.x,m.z,px,pz,2.4)){m.path=[{x:px,z:pz}];break}}}
+   if(m.path.length)walkPath(dt,1.8);
+   if(m.sniff<=0){if(m.huntLeft<=0)beginLeave();else roamNext()}break}
+  case 'leaving':if(walkPath(dt,5))hideMonster();break;
+  case 'lunge':{m.spd=24;const d=m.d;if(d>1.6){m.x+=dx/d*24*dt;m.z+=dz/d*24*dt}m.ang=Math.atan2(dx,dz);if(d<=1.9&&!G.over)kill();break}
+ }
+ if(m.state==='hidden')return;
+ // proximity effects
+ if(!m.announced&&m.d<55&&m.state!=='lunge'){m.announced=true;
+  const dt2=dirText(m.x-G.px,m.z-G.pz);say(`إنه قادم! الوحش ${dt2}! اثبت مكانك أو اختبئ في مبنى!`,{urgent:true,raw:true,panic:8})}
+ if(m.d<38&&m.state!=='lunge'&&!G.over)showWarn('⚠ اثبت... لا تتحرك',400,true);
+ // footsteps
+ if(m.spd>.5){m.stepPh+=dt*m.spd*.28;if(Math.floor(m.stepPh)!==m.stepSide){m.stepSide=Math.floor(m.stepPh);
+  const vol=clamp(1.1/(1+m.d/9),0,.9);if(m.d<110){Aud.mstep(vol,Math.sin(relAng(m.x-G.px,m.z-G.pz)));if(m.d<26)G.shake=Math.max(G.shake,(1-m.d/26)*.5)}}}
+ monLight.position.set(m.x,3.8,m.z);monLight.intensity=m.state==='lunge'?60:28;
+}
+function animMonster(dt){
+ const m=Mo,P=m.parts;if(!m.g.visible)return;
+ m.g.position.set(m.x,0,m.z);m.g.rotation.y=m.ang;
+ const sp=m.spd||0;m.walkT+=dt*(1.5+sp*.6);const k=Math.min(1,sp/4),sw=Math.sin(m.walkT)*.7*k;
+ const lunge=m.state==='lunge'||G.over,srch=m.state==='search';
+ P.legs[0].rotation.x=sw;P.legs[1].rotation.x=-sw;
+ P.arms[0].rotation.x=-sw*.5-(lunge?1.9:0)-(srch?.6:0);P.arms[1].rotation.x=sw*.5-(lunge?1.9:0)-(srch?.6:0);
+ P.arms.forEach(a=>a.userData.fa.rotation.x=lunge?-.6:-.15);
+ P.head.rotation.y=srch?Math.sin(G.t*1.3)*.9:Math.sin(m.walkT*.5)*.15;
+ P.head.rotation.x=srch?.35+Math.sin(G.t*2)*.1:(lunge?-.4:.1);
+ P.jaw.rotation.x=lunge?.9:.1+Math.sin(G.t*2)*.05;
+ m.g.position.y=Math.abs(Math.cos(m.walkT))*.12*k;
+ P.glow.color.setRGB(1,.12+.1*Math.sin(G.t*6),.05);
+}
+function kill(){
+ G.over=true;G.deathT=0;Aud.scare();
+ const f=$('flash');f.style.transition='none';f.style.opacity=.9;setTimeout(()=>{f.style.transition='opacity 1.2s';f.style.opacity=.35},60);
+ if(navigator.vibrate)navigator.vibrate([200,80,500]);
+ $('warn').classList.remove('show');
+}
+const WHY={run:'سمع الوحش خطواتك السريعة وأنت تركض.',walk:'تحرّكتَ بينما كان الوحش قريباً... وهو يسمع كل شيء.',crouch:'حتى الخطوات الخفيفة تُسمَع في هذا الصمت.',glass:'تحطّم الزجاج تحت قدميك... وسمع الوحش كل شيء.',can:'ركلتَ علبة صفيح فدوّى الصدى في الأرجاء.',companion:'أصدر سامر صوتاً... وكان ذلك كافياً لينقضّ الوحش.',bump:'وقفتَ في طريقه... الوحش لا يرى لكنه يشعر بك.',still:'شعر الوحش بوجودك.'};
+function showOver(){
+ G.overShown=true;
+ $('overWhy').textContent=(WHY[G.deathWhy]||WHY.walk)+' صمدتَ '+mmss(G.t)+' • اليوم '+ar(G.day)+' من ٣.';
+ $('overStats').textContent='ملاحظات: '+ar(G.notes)+' • أماكن مفتّشة: '+ar(G.searched)+' • ضجيج صدر: '+ar(G.noiseEvents);
+ $('over').classList.remove('hide');$('chat').classList.add('hide');
+}
+
+/* ===================== PLAYER ACTIONS ===================== */
+const input={jx:0,jy:0,keys:{}};
+function triggerNoiseObj(o){
+ o.active=false;
+ if(o.type==='glass'){o.m.scale.multiplyScalar(.75);Aud.glass(1,0);emitNoise(G.px,G.pz,1,true,'glass');showWarn('💥 تحطّم الزجاج! الوحش سمعك',2200)}
+ else{const a=rand(0,6.28);o.kick={vx:Math.cos(a)*4,vz:Math.sin(a)*4,t:1};Aud.can(1,0);emitNoise(G.px,G.pz,.7,true,'can');showWarn('🥫 ركلتَ علبة!',2000)}
+ C.panic=clamp(C.panic+14,0,100);
+ const near=G.monsterOn&&Mo.state!=='hidden'&&Mo.d<60;
+ say(near?pick(["(يهمس بذعر) ماذا فعلت؟! لقد سمعنا!","لا لا لا... اثبت! لا تتحرك!"]):pick(["اششش! انتبه لخطواتك!","هذا الصوت يُسمع من بعيد... كن حذراً.","انظر إلى الأرض قبل أن تمشي!"]),{urgent:true,raw:true});
+}
+function throwCan(){
+ if(G.over||!G.started||G.cans<=0){if(G.started&&!G.over)showWarn('لا توجد علب! فتّش عنها',1500);return}
+ G.cans--;const fx=-Math.sin(G.yaw),fz=-Math.cos(G.yaw);let dist=7+clamp(G.pitch+.5,0,1)*17,tx=G.px,tz=G.pz;
+ for(;dist>2;dist-=1.5){tx=G.px+fx*dist;tz=G.pz+fz*dist;if(!inSolid(tx,tz))break}
+ const m=new THREE.Mesh(canGeo,canMat);m.position.set(G.px,1.5,G.pz);scene.add(m);projs.push({m,t:0,x0:G.px,z0:G.pz,x1:tx,z1:tz});Aud.click();
+ if(Math.random()<.4)say(pick(["(يهمس) فكرة ذكية... الآن ابتعد بهدوء.","جيد! دعه يذهب إلى هناك."]),{raw:true});
+}
+function updateProjs(dt){
+ for(let i=projs.length-1;i>=0;i--){const p=projs[i];p.t+=dt/.8;const t=Math.min(p.t,1);
+  p.m.position.set(lerp(p.x0,p.x1,t),lerp(1.5,.12,t)+Math.sin(Math.PI*t)*2.5,lerp(p.z0,p.z1,t));p.m.rotation.x+=dt*14;
+  if(p.t>=1){p.m.position.y=.12;p.m.rotation.set(0,0,Math.PI/2);projs.splice(i,1);
+   const rel=relAng(p.x1-G.px,p.z1-G.pz),d=Math.hypot(p.x1-G.px,p.z1-G.pz);Aud.can(clamp(1-d/60,.3,1),Math.sin(rel));emitNoise(p.x1,p.z1,.85,false,'can')}}
+}
+function searchResult(l){
+ l.done=true;scene.remove(l.m);scene.remove(l.s);G.searched++;
+ const r=Math.random();let msg;
+ if(r<.34){G.spare++;msg='🔋 وجدتَ بطارية!'}
+ else if(r<.58){const n=1+Math.floor(Math.random()*2);G.cans+=n;msg=`🥫 وجدتَ ${ar(n)} علب صفيح للإلهاء`}
+ else if(r<.78&&G.notes<NOTES.length){$('noteTxt').textContent=NOTES[G.notes++];$('noteCard').classList.remove('hide');msg='📜 وجدتَ ملاحظة'}
+ else if(r<.9){msg='لا شيء... غبار فقط'}
+ else{msg='💥 سقط شيء من الرف!';Aud.can(1,0);emitNoise(G.px,G.pz,.75,true,'can');C.panic=clamp(C.panic+10,0,100)}
+ showWarn(msg,2200);
+ if(Math.random()<.35){setTimeout(()=>{if(G.over)return;G.spare++;say('(يفتش الخزانة المجاورة) وجدتُ بطارية أخرى! ضعتُها في حقيبتك.',{raw:true});showWarn('🔋 سامر وجد بطارية',1800)},3500)}
+}
+function doInteract(){
+ if(G.over||!G.started)return;
+ if(G.search){G.search=null;$('prog').classList.add('hide');return}
+ if(G.nearLoot){G.search={l:G.nearLoot,t:0};$('prog').classList.remove('hide')}
+}
+
+/* ===================== COMPANION ===================== */
+function updateCompanion(dt){
+ const fx=-Math.sin(G.yaw),fz=-Math.cos(G.yaw),rx=Math.cos(G.yaw),rz=-Math.sin(G.yaw);
+ const tx=G.px-fx*2.3+rx*1.3,tz=G.pz-fz*2.3+rz*1.3;
+ const dx=tx-C.x,dz=tz-C.z,d=Math.hypot(dx,dz);
+ if(d>28){C.x=tx;C.z=tz}
+ else if(d>.35){const sp=Math.min(d*2.5,6.5);C.x+=dx/d*sp*dt;C.z+=dz/d*sp*dt;C.moving=sp>.8;C.ang+=angDiff(C.ang,Math.atan2(dx,dz))*Math.min(1,dt*6)}
+ else{C.moving=false;C.ang+=angDiff(C.ang,Math.atan2(G.px-C.x,G.pz-C.z))*Math.min(1,dt*3)}
+ if(d>8)C.stuck+=dt;else C.stuck=0;
+ if(C.stuck>4){C.x=G.px-fx*1.4;C.z=G.pz-fz*1.4;C.stuck=0}
+ const r=collide(C.x,C.z,.4);C.x=r[0];C.z=r[1];
+ if(C.moving)C.walkT+=dt*9;
+ const sw=C.moving?Math.sin(C.walkT)*.6:0;Co.legs[0].rotation.x=sw;Co.legs[1].rotation.x=-sw;Co.arms[0].rotation.x=-sw*.7;Co.arms[1].rotation.x=sw*.7;
+ const trem=C.panic>55?(C.panic-55)/45*.03:0;
+ Co.g.position.set(C.x+(trem?rand(-trem,trem):0),0,C.z+(trem?rand(-trem,trem):0));Co.g.rotation.y=C.ang;
+ // panic dynamics
+ const day=G.day,prog3=clamp((G.t-2*CYCLE)/CYCLE,0,1);
+ const base=[0,8,26,46][day]+(day===3?prog3*22:0);
+ const active=G.monsterOn&&Mo.state!=='hidden'&&Mo.state!=='roaring';
+ const fear=active&&Mo.d<60?(1-Mo.d/60)*70*(.6+.2*day):0;
+ const tgt=Math.max(base,fear);
+ if(C.panic<tgt)C.panic=Math.min(tgt,C.panic+dt*(fear>C.panic?8:.8));else C.panic=Math.max(tgt,C.panic-dt*(.8+(C.quiet>0?2.5:0)));
+ C.quiet=Math.max(0,C.quiet-dt);
+ // spontaneous chatter / spooks
+ C.spookT-=dt;
+ if(C.spookT<=0&&G.phase==='town'&&C.quiet<=0){
+  C.spookT=[0,rand(60,100),rand(35,55),rand(16,28)][day];
+  const pool=AMB[day];let i,g=0;do{i=Math.floor(Math.random()*pool.length);g++}while(g<10&&C.usedAmb.includes(i+':'+day));C.usedAmb.push(i+':'+day);if(C.usedAmb.length>8)C.usedAmb.shift();
+  say(pool[i],{raw:true,panic:[0,0,5,12][day],whisper:day===3});
+ }
+ // gasps (noise) when panic too high
+ C.gaspT-=dt;
+ if(C.panic>82&&C.gaspT<=0&&C.quiet<=0&&G.phase==='town'&&!G.over){
+  C.gaspT=rand(3.5,6);
+  if(Math.random()<.6){
+   if(C.panic>95){deliver('(يصرخ!) لا أستطيع... لا أستطيييع!',{});Aud.gasp();Aud.noise({type:'bandpass',f:1600,q:1,dur:.9,vol:.5,atk:.02});emitNoise(C.x,C.z,1,true,'companion');showWarn('😱 سامر صرخ!',2400)}
+   else{deliver('(يشهق بصوت مسموع!)',{});Aud.gasp();emitNoise(C.x,C.z,.55,true,'companion');showWarn('😨 سامر أصدر صوتاً! هدّئه!',2400)}
+  }
+ }
+ // helpful warnings every ~1s
+ C.warnT-=dt;
+ if(C.warnT<=0){C.warnT=1;companionTick()}
+}
+let lastObjWarn=0;
+function companionTick(){
+ if(G.over||G.phase!=='town')return;
+ const fx=-Math.sin(G.yaw),fz=-Math.cos(G.yaw);
+ if(G.t-lastObjWarn>9){
+  for(const o of noiseObjs){if(!o.active||o.warned)continue;const dx=o.x-G.px,dz=o.z-G.pz,d=Math.hypot(dx,dz);
+   if(d<5&&(dx*fx+dz*fz)/d>.3){o.warned=true;lastObjWarn=G.t;say(o.type==='glass'?pick(["انتبه! زجاج مكسور أمامك، تجنّبه!","توقف! الأرض مليئة بالزجاج هنا."]):pick(["علبة صفيح أمامك! لا تدُسها!","انتبه لتلك العلب على الأرض!"]),{urgent:true,raw:true});break}}
+ }
+ for(const b of buildings){
+  const d=Math.hypot(b.doorX-G.px,b.doorZ-G.pz);
+  if(b.danger&&!b.warned&&d<14){b.warned=true;say(pick(["لا تدخل ذلك المبنى! سمعتُ زجاجاً يتكسر هناك... الأرضية مليئة بالشظايا والعلب.","انتظر! هذا البيت خطر؛ مدخله مفروش بالزجاج. دعنا نبتعد."]),{urgent:true,raw:true});}
+ }
+ if(G.indoor&&G.indoor.loot.some(l=>!l.done)&&!G.indoor.hinted){
+  G.indoor.tin+=1;
+  if(G.indoor.tin>9){G.indoor.hinted=true;const l=G.indoor.loot.find(l=>!l.done);l.hint=true;G.hintT=40;say(`وجدتُ صندوقاً ${dirText(l.x-G.px,l.z-G.pz)}! فتّشه بهدوء.`,{raw:true})}
+ }else if(!G.indoor){}
+}
+function companionEvent(kind){
+ const d=G.day;
+ if(kind==='arrive'){
+  say("وصلنا... لكن هذه البلدة ميتة. لا أضواء، لا بشر... فقط الصمت.",{raw:true});
+  say("سمعتُ في الغابة شيئاً يزأر. لا تركض في الشوارع، وإن زأر فتجمّد تماماً.",{raw:true});
+  say("فتّش المباني عن بطاريات وعلب. وانتبه للزجاج... سأحذّرك.",{raw:true});
+ }
+}
+
+/* ===================== ENVIRONMENT ===================== */
+function updateEnv(dt){
+ const fr=(F0+G.t/CYCLE)%1;const Lr=.5+.5*Math.cos(2*Math.PI*(fr-.5));const Lc=Math.pow(Lr,1.3);G.L=Lc;G.fr=fr;
+ fogC.copy(nightC).lerp(dayC,Lc);scene.fog.color.copy(fogC);scene.background.copy(fogC);
+ const forest=G.phase==='forest'?1:0;
+ scene.fog.density=lerp(.05,.03,Lc)+forest*.006+G.fear*.008;
+ G.indoorF+=((G.indoor?1:0)-G.indoorF)*Math.min(1,dt*3);
+ const inF=1-G.indoorF*.65;
+ hemi.intensity=(.24+1.9*Lc)*inF;sun.intensity=(.08+2.2*Lc)*inF;
+ // flashlight
+ let fl=0;
+ if(G.flash&&G.battery>0){
+  G.battery=Math.max(0,G.battery-dt*.33);
+  fl=1;
+  if(G.battery<20)fl*=.75+.25*Math.sin(G.t*40)*Math.random();
+  if(G.fear>.6&&Math.random()<G.fear*.08)fl*=.1;
+  if(G.battery<=0.01&&G.spare>0){G.spare--;G.battery=100;showWarn('🔋 تم تبديل البطارية',1800)}
+ }
+ spot.intensity=90*fl;
+ // street lamps flicker
+ lampLights.forEach(o=>{o.l.intensity=(Math.random()<.04?0:o.base*(.6+.4*Math.random()))*(1-Lc*.7)});
+ Aud.setAmb(forest?1:.4,1-Lc,G.fear);
+}
+
+/* ===================== MAIN UPDATE ===================== */
+function applyCamera(dt,bob){
+ const sh=G.shake;G.shake=Math.max(0,G.shake-dt*1.4);
+ const fear=G.fear;
+ const tEye=G.over?1.0:(G.crouch?1.0:1.7);G.eye+=(tEye-G.eye)*Math.min(1,dt*8);
+ camera.position.set(G.px+(sh?rand(-1,1)*sh*.06:0),G.eye+bob+(sh?rand(-1,1)*sh*.05:0),G.pz+(sh?rand(-1,1)*sh*.06:0));
+ const roll=(sh?rand(-1,1)*sh*.03:0)+Math.sin(G.t*1.7)*fear*.012;
+ camera.rotation.set(G.pitch,G.yaw,roll);
+ camera.fov=G.baseFov+G.pulse*fear*5+sh*1.5;camera.updateProjectionMatrix();
+ G.pulse*=Math.exp(-dt*7);
+}
+let distKey=-1;
+function updateVisuals(){
+ const f=G.fear,key=Math.round(f*10);
+ $('pvig').style.opacity=(Math.pow(f,1.3)*.9+G.pulse*f*.25).toFixed(2);
+ $('vig').style.opacity=clamp(.55+f*.45,0,1);
+ if(key!==distKey){distKey=key;const b=f>.35?(Math.round(f*f*6)/2):0;canvas.style.filter=b>0?`blur(${b}px) saturate(${(1-f*.5).toFixed(2)}) contrast(${(1+f*.2).toFixed(2)})`:'none'}
+ const sc=1+G.pulse*f*.02;canvas.style.transform=f>.2?`scale(${sc.toFixed(3)}) translate(${(rand(-1,1)*f*f*3).toFixed(1)}px,${(rand(-1,1)*f*f*3).toFixed(1)}px)`:'none';
+}
+let hudT=0;
+function updateHUD(dt){
+ hudT-=dt;if(hudT>0)return;hudT=.1;
+ $('bBat').style.width=G.battery+'%';$('bBat').style.background=G.battery<20?'#c44':'#d8c27a';
+ $('spareTxt').textContent='+'+ar(G.spare);$('bSta').style.width=G.stamina+'%';$('bNoise').style.width=clamp(G.noise*100,2,100)+'%';
+ $('canTxt').textContent='🥫'+ar(G.cans);
+ const label=timeLabel(G.fr);
+ $('dayTxt').textContent='اليوم '+ar(G.day)+' / ٣';$('clockTxt').textContent=label;$('bDay').style.width=(G.fr*100)+'%';
+ $('remTxt').textContent='⏳ '+mmss(3*CYCLE-G.t);
+ $('bFear').style.width=C.panic+'%';
+ $('calmBtn').classList.toggle('hide',!(C.panic>52&&!chatOpen()&&!G.over));
+ $('actBtn').classList.toggle('hide',!(G.nearLoot&&!G.over&&!G.search));
+ // objective + arrow
+ let tx=null,tz=null,obj;
+ if(G.phase==='forest'){tx=0;tz=90;obj='🧭 اتجه إلى البلدة • '+ar(Math.hypot(tx-G.px,tz-G.pz))+' م'}
+ else{obj='🔦 فتّش بصمت • انجُ حتى فجر اليوم الرابع';if(G.hintT>0){const n=nearestLoot();if(n){tx=n.l.x;tz=n.l.z;obj='📍 صندوق مُعلَّم • '+ar(n.d)+' م'}}}
+ $('objBar').textContent=obj;
+ const ar_=$('arrow');if(tx!==null){ar_.style.visibility='visible';ar_.style.transform=`rotate(${relAng(tx-G.px,tz-G.pz)}rad)`}else ar_.style.visibility='hidden';
+ // label change announcements
+ if(label!==G.lastLabel){
+  if(G.lastLabel&&G.phase==='town'){const p={'الغروب':["حلّ المساء... الظلام يزيد جرأة هذا الشيء.","الشمس تغيب. كن أكثر حذراً."],'الليل':["بدأ الليل. اتبع الصمت، وراقب الضجيج.","الليل الآن... هو يتحرك أكثر في الظلام."],'الفجر':["يلوح الفجر... نجونا من ليلة أخرى.","بدأ الضوء يتسلل. لا تفرح كثيراً بعد."]}[label];if(p)say(pick(p),{raw:true})}
+  G.lastLabel=label}
+}
+function dayChange(d){
+ showWarn('☀ اليوم '+ar(d)+' من ٣',3500);
+ if(d===2){say("اليوم الثاني... لم أنم دقيقة. هل ما زلنا أحياء حقاً؟",{urgent:true,raw:true});C.panic=Math.max(C.panic,26)}
+ if(d===3){say("(يهمس) اليوم الأخير... إن نجونا الليلة سننجو. لكنني لا أشعر بشيء سوى الخوف...",{urgent:true,raw:true,whisper:true});C.panic=Math.max(C.panic,45)}
+}
+const SCRIPT=[
+ {t:3,f:()=>say("هل أنت بخير؟ لقد ضللنا الطريق منذ ساعات... الظلام دامس.",{raw:true})},
+ {t:13,f:()=>say("انظر! وهج خافت بين الأشجار... لا بد أنها بلدة قريبة. لنذهب إليها قبل أن يشتد الظلام!",{raw:true})},
+ {t:24,f:()=>say("اتبع السهم في الأعلى، وسأرشدك. وإن أردت التحدث معي فاضغط على زر 💬.",{raw:true})},
+ {t:55,f:()=>{if(G.phase==='forest')say("هل سمعت ذلك؟ شيء يتحرك بين الأشجار... أسرع نحو البلدة.",{raw:true,panic:8})}}
+];
+function update(dt){
+ if(G.over){
+  G.deathT+=dt;const m=Mo,dx=m.x-G.px,dz=m.z-G.pz;
+  G.yaw+=angDiff(G.yaw,Math.atan2(-dx,-dz))*Math.min(1,dt*10);G.pitch+=(.5-G.pitch)*Math.min(1,dt*6);
+  m.spd=0;animMonster(dt);G.shake=.7;G.fear=1;applyCamera(dt,0);updateVisuals();
+  if(G.deathT>1.8&&!G.overShown)showOver();return;
+ }
+ if(G.won){applyCamera(dt,0);return}
+ G.t+=dt;
+ // days
+ const day=Math.min(3,Math.floor(G.t/CYCLE)+1);if(day!==G.day){G.day=day;dayChange(day)}
+ if(G.t>=3*CYCLE){G.won=true;Mo.g.visible=false;monLight.intensity=0;$('winStats').textContent='ملاحظات: '+ar(G.notes)+' • أماكن مفتّشة: '+ar(G.searched);$('win').classList.remove('hide');$('chat').classList.add('hide');return}
+ while(G.scriptI<SCRIPT.length&&G.t>=SCRIPT[G.scriptI].t){SCRIPT[G.scriptI].f();G.scriptI++}
+ // phase
+ if(G.phase==='forest'&&Math.abs(G.px)<86&&Math.abs(G.pz)<86){G.phase='town';G.monsterOn=true;Mo.next=rand(28,40);companionEvent('arrive');showWarn('🏚 بلدة الصمت',3000)}
+ if(G.phase==='forest'){
+  if(G.pz<200&&!G.f1){G.f1=1;Aud.twig();setTimeout(Aud.twig.bind(Aud),700)}
+  if(G.pz<165&&!G.f2){G.f2=1;Aud.roar(.4,.85,rand(-.8,.8));G.shake=.5;G.fearBoost=.35;say("(يهمس) هذا لم يكن حيواناً... أسرع من فضلك.",{urgent:true,raw:true,panic:10})}
+ }
+ // ---- player movement
+ const k=input.keys;let jx=input.jx,jy=input.jy;
+ if(k.KeyW||k.ArrowUp)jy-=1;if(k.KeyS||k.ArrowDown)jy+=1;if(k.KeyA||k.ArrowLeft)jx-=1;if(k.KeyD||k.ArrowRight)jx+=1;
+ let mag=Math.hypot(jx,jy);if(mag>1){jx/=mag;jy/=mag;mag=1}if(mag<.12){mag=0;jx=jy=0}
+ if(G.stamina<=0)G.exhausted=true;else if(G.stamina>25)G.exhausted=false;
+ const wantRun=(G.run||k.ShiftLeft||k.ShiftRight)&&mag>0&&!G.crouch&&!G.exhausted;
+ const spd=mag>0?(G.crouch?1.5:wantRun?6.4:3.3)*(wantRun||G.crouch?1:mag):0;
+ if(G.search&&mag>0){G.search=null;$('prog').classList.add('hide')}
+ const fx=-Math.sin(G.yaw),fz=-Math.cos(G.yaw),rx=Math.cos(G.yaw),rz=-Math.sin(G.yaw);
+ if(spd>0){const vx=fx*(-jy)+rx*jx,vz=fz*(-jy)+rz*jx;const vm=Math.hypot(vx,vz)||1;const r=collide(G.px+vx/vm*spd*dt,G.pz+vz/vm*spd*dt,.4);G.px=r[0];G.pz=r[1]}
+ G.moving=spd>.2;
+ G.mode=!G.moving?'still':G.crouch?'crouch':wantRun?'run':'walk';
+ G.stamina=clamp(G.stamina+(wantRun&&G.moving?-22:(G.moving?8:14))*dt,0,100);
+ const nTarget={still:G.search?.08:0,crouch:.12,walk:.3+.25*mag,run:1}[G.mode];
+ G.noise+=(nTarget-G.noise)*Math.min(1,dt*6);
+ G.indoor=null;for(const b of buildings)if(G.px>b.x0+.45&&G.px<b.x1-.45&&G.pz>b.z0+.45&&G.pz<b.z1-.45){G.indoor=b;break}
+ const im=G.indoor?.55:1;
+ G.lethalR={still:0,crouch:7,walk:19,run:34}[G.mode]*im;
+ if(G.spike>0){G.spike-=dt;G.lethalR=Math.max(G.lethalR,G.spikeR*(G.indoor?.75:1))}
+ G.stepNoiseT-=dt;if(G.moving&&G.noise>.25&&G.stepNoiseT<=0){hearMonster(G.px,G.pz,G.noise*.7);G.stepNoiseT=1.2}
+ G.stepDist+=spd*dt;if(G.mode!=='crouch'&&G.stepDist>(G.mode==='run'?2.2:1.8)){G.stepDist=0;Aud.step(G.mode==='run'?.14:.07)}
+ G.bobT+=spd*dt*1.9;const bob=Math.sin(G.bobT)*.035*(Math.min(spd,6.4)/3.3);
+ // noise objects
+ if(G.moving){for(const o of noiseObjs){if(!o.active)continue;const dx=o.x-G.px,dz=o.z-G.pz;if(dx*dx+dz*dz<o.r*o.r){triggerNoiseObj(o)}}}
+ for(const o of noiseObjs){if(o.kick){o.kick.t-=dt;o.x+=o.kick.vx*dt*o.kick.t;o.z+=o.kick.vz*dt*o.kick.t;o.m.position.x=o.x;o.m.position.z=o.z;o.m.rotation.y+=dt*8;if(o.kick.t<=0)o.kick=null}}
+ updateProjs(dt);
+ // loot
+ G.nearLoot=null;let nd=2.4;
+ for(const l of lootAll){if(l.done)continue;const d=Math.hypot(l.x-G.px,l.z-G.pz);if(d<nd){nd=d;G.nearLoot=l}
+  const h=l.hint;l.s.scale.setScalar(h?2.2:1.2);l.s.material.opacity=(h?.8:.45)+Math.sin(G.t*3+l.x)*.12}
+ G.hintT=Math.max(0,G.hintT-dt);if(G.hintT<=0)lootAll.forEach(l=>l.hint=false);
+ if(G.search){G.search.t+=dt;$('prog').firstChild.style.width=Math.min(100,G.search.t/1.8*100)+'%';
+  if(G.search.t>=1.8){const l=G.search.l;G.search=null;$('prog').classList.add('hide');searchResult(l)}}
+ // companion + monster
+ updateCompanion(dt);updateMonster(dt);animMonster(dt);
+ // fear
+ const mActive=G.monsterOn&&Mo.state!=='hidden';
+ const prox=mActive&&Mo.state!=='roaring'?clamp(1-(Mo.d-5)/55,0,1):0;
+ G.fearBoost=Math.max(0,G.fearBoost-dt*.22);
+ G.fear=clamp(Math.max(prox,G.fearBoost)+C.panic/100*.12,0,1);
+ // heartbeat
+ G.hbT-=dt;
+ if(G.fear>.08&&G.hbT<=0){const bpm=62+120*G.fear;G.hbT=60/bpm;Aud.heart(.35+.75*G.fear);G.pulse=1}
+ else if(G.fear<=.08&&G.hbT<=0)G.hbT=.5;
+ // ambient events
+ G.ambT-=dt;if(G.ambT<=0){G.ambT=rand(9,22)*(1.2-G.fear*.5);Aud.ambientEvent()}
+ // dust
+ for(let i=0;i<dustN;i++){let x=dustL[i*3],y=dustL[i*3+1],z=dustL[i*3+2];x+=Math.sin(G.t*.3+i)*dt*.2;y+=Math.cos(G.t*.2+i*2)*dt*.1;
+  x=((x+15)%30+30)%30-15;z=((z+15)%30+30)%30-15;dustL[i*3]=x;dustL[i*3+1]=clamp(y,.2,8);dustL[i*3+2]=z;
+  dustP[i*3]=G.px+x;dustP[i*3+1]=dustL[i*3+1];dustP[i*3+2]=G.pz+z}
+ dustGeo.attributes.position.needsUpdate=true;
+ // companion mid-search hints etc. handled in tick
+ updateEnv(dt);applyCamera(dt,bob);updateVisuals();updateHUD(dt);
+}
+
+/* ===================== INPUT ===================== */
+const joy=$('joy'),knob=$('knob');let joyId=null;
+function joyMove(e){const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;let dx=e.clientX-cx,dy=e.clientY-cy;const R=r.width*.38,m=Math.hypot(dx,dy);if(m>R){dx=dx/m*R;dy=dy/m*R}knob.style.transform=`translate(${dx}px,${dy}px)`;input.jx=dx/R;input.jy=dy/R}
+joy.addEventListener('pointerdown',e=>{joyId=e.pointerId;try{joy.setPointerCapture(e.pointerId)}catch(_){}joyMove(e);e.preventDefault()});
+joy.addEventListener('pointermove',e=>{if(e.pointerId===joyId)joyMove(e)});
+const joyEnd=e=>{if(e.pointerId===joyId){joyId=null;input.jx=input.jy=0;knob.style.transform='translate(0,0)'}};
+joy.addEventListener('pointerup',joyEnd);joy.addEventListener('pointercancel',joyEnd);
+const lz=$('lookzone');let lookId=null,lx=0,ly=0;
+lz.addEventListener('pointerdown',e=>{if(lookId!==null)return;lookId=e.pointerId;try{lz.setPointerCapture(e.pointerId)}catch(_){}lx=e.clientX;ly=e.clientY;if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()});
+lz.addEventListener('pointermove',e=>{if(e.pointerId!==lookId||!G.started||G.over)return;const dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;const s=e.pointerType==='mouse'?.0035:.0055;G.yaw-=dx*s;G.pitch=clamp(G.pitch-dy*s,-1.25,1.25)});
+const lookEnd=e=>{if(e.pointerId===lookId)lookId=null};lz.addEventListener('pointerup',lookEnd);lz.addEventListener('pointercancel',lookEnd);
+function onBtn(id,fn){$(id).addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();fn(e)})}
+function toggleLight(){G.flash=!G.flash;$('bLight').classList.toggle('on',G.flash);Aud.click()}
+function toggleCrouch(){G.crouch=!G.crouch;$('bCrouch').classList.toggle('on',G.crouch);Aud.click()}
+function toggleChat(){const c=$('chat');c.classList.toggle('hide');if(chatOpen()){unread=0;$('chatBadge').classList.add('hide');$('msgs').scrollTop=$('msgs').scrollHeight;if(Q.busy)$('typing').classList.remove('hide')}}
+onBtn('bLight',toggleLight);onBtn('bCrouch',toggleCrouch);onBtn('bThrow',throwCan);onBtn('bChat',toggleChat);onBtn('actBtn',doInteract);
+onBtn('bMute',()=>{G.muted=!G.muted;Aud.setMute(G.muted);$('bMute').firstChild.textContent=G.muted?'🔇':'🔊'});
+const runB=$('bRun');
+runB.addEventListener('pointerdown',e=>{e.preventDefault();G.run=true;runB.classList.add('on');try{runB.setPointerCapture(e.pointerId)}catch(_){}});
+const runEnd=()=>{G.run=false;runB.classList.remove('on')};runB.addEventListener('pointerup',runEnd);runB.addEventListener('pointercancel',runEnd);runB.addEventListener('lostpointercapture',runEnd);
+onBtn('calmBtn',()=>{const t=pick(["اهدأ يا سامر، أنا معك... تنفّس ببطء","لا تخف يا سامر، سنكون بخير","اششش... اهدأ، كل شيء تحت السيطرة"]);addMsg('you',t);setTimeout(()=>replyTo(t),250)});
+$('chatClose').addEventListener('click',toggleChat);
+$('chatForm').addEventListener('submit',e=>{e.preventDefault();const i=$('chatIn');const v=i.value;i.value='';sendChat(v)});
+$('chips').addEventListener('click',e=>{const b=e.target.closest('button');if(b)sendChat(b.dataset.t)});
+$('noteClose').addEventListener('click',()=>$('noteCard').classList.add('hide'));
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SR){const mic=$('micBtn');mic.classList.remove('hide');let rec=null,on=false;
+ mic.addEventListener('click',()=>{if(on&&rec){rec.stop();return}
+  try{rec=new SR();rec.lang='ar-SA';rec.interimResults=false;rec.maxAlternatives=1;
+   rec.onstart=()=>{on=true;mic.textContent='⏺'};rec.onend=()=>{on=false;mic.textContent='🎤'};rec.onerror=()=>{on=false;mic.textContent='🎤'};
+   rec.onresult=ev=>{const t=ev.results[0][0].transcript;if(t)sendChat(t)};rec.start()}catch(_){}})}
+window.addEventListener('keydown',e=>{if(document.activeElement===$('chatIn'))return;input.keys[e.code]=true;
+ if(e.code==='KeyF')toggleLight();if(e.code==='KeyC')toggleCrouch();if(e.code==='KeyE')doInteract();if(e.code==='KeyQ')throwCan();if(e.code==='KeyT'){e.preventDefault();toggleChat();if(chatOpen())$('chatIn').focus()}});
+window.addEventListener('keyup',e=>{input.keys[e.code]=false});
+document.addEventListener('touchmove',e=>{if(!e.target.closest('.scroll'))e.preventDefault()},{passive:false});
+document.addEventListener('gesturestart',e=>e.preventDefault());
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('visibilitychange',()=>{if(document.hidden){runEnd();input.jx=input.jy=0}else Aud.resume()});
+
+/* grain texture */
+(function(){const c=document.createElement('canvas');c.width=c.height=128;const x=c.getContext('2d');const id=x.createImageData(128,128);for(let i=0;i<id.data.length;i+=4){const v=Math.random()*255;id.data[i]=id.data[i+1]=id.data[i+2]=v;id.data[i+3]=255}x.putImageData(id,0,0);$('grain').style.backgroundImage=`url(${c.toDataURL()})`})();
+
+/* ===================== START / LOOP ===================== */
+G.px=pathX(G.pz);G.yaw=0;C.x=G.px+1.3;C.z=G.pz+2.3;
+$('startBtn').addEventListener('click',()=>{
+ Aud.init();Aud.resume();
+ try{const el=document.documentElement;const p=(el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el);if(p&&p.catch)p.catch(()=>{});
+  if(screen.orientation&&screen.orientation.lock){const q=screen.orientation.lock('landscape');if(q&&q.catch)q.catch(()=>{})}}catch(_){}
+ $('start').classList.add('hide');$('hud').classList.remove('hide');G.started=true;
+ setTimeout(()=>{$('fade').style.opacity=0},100);
+ showWarn('اسحب الشاشة للنظر • العصا للمشي',4500);
+ addMsg('sys','— بدأت الرحلة. سامر معك —');
+ setTimeout(resize,400);
+});
+$('retryBtn').addEventListener('click',()=>location.reload());
+$('again').addEventListener('click',()=>location.reload());
+$('fade').style.zIndex=5;
+
+let last=performance.now();
+function loop(now){
+ requestAnimationFrame(loop);
+ const dt=Math.min(.05,(now-last)/1000);last=now;
+ if(G.started)update(dt);
+ else{G.yaw=Math.sin(now*.0001)*.15;updateEnv(dt);applyCamera(dt,0)}
+ renderer.render(scene,camera);
+}
+requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
